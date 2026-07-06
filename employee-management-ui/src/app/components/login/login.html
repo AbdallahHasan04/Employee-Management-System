@@ -1,0 +1,24 @@
+<div class = "login-wrapper">
+    <form [formGroup]= "loginform" (ngSubmit)="onSubmit()" class = login-form> 
+        <h2> Employeee Management System </h2>
+        <h2> Sign-in </h2>
+
+        <mat-form-field appearance="outline" class = "full-width">
+            <mat-label> Username </mat-label>
+            <input matInput formControlName = "username" type="text" placeholder="Enter Username">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class = "full-width">
+            <mat-label> Password </mat-label>
+            <input matInput formControlName = "password" type="password" placeholder="Enter Password" class = "password">
+        </mat-form-field>
+
+        @if (errormessage) {
+            <mat-error>{{ errormessage }}</mat-error>
+        }
+
+        <button mat-raised-button color = "primary" type="submit" [disabled]="loginform.invalid" class = "full-width">
+            Submit
+        </button>
+    </form>
+</div>
