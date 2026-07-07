@@ -42,26 +42,22 @@ namespace EmployeeManagementAPI.Controllers
         [HttpPut]
         public ActionResult Update(EmployeeDto employeeDto)
         {
-            var existing = _service.GetEmployeeById(employeeDto.Id);
-            if (existing == null)
+            var existing = _service.UpdateEmployee(employeeDto);
+            if (!existing)
             {
                 return NotFound(new { message = $"Cannot update. Employee with ID {employeeDto.Id} not found." });
             }
-
-            _service.UpdateEmployee(employeeDto);
             return Ok(new { message = "Employee updated successfully!" });
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var existing = _service.GetEmployeeById(id);
-            if (existing == null)
+            var existing = _service.DeleteEmployee(id);
+            if (!existing)
             {
                 return NotFound(new { message = $"Cannot delete. Employee with ID {id} not found." });
             }
-
-            _service.DeleteEmployee(id);
             return Ok(new { message = "Employee deleted successfully!" });
         }
     }

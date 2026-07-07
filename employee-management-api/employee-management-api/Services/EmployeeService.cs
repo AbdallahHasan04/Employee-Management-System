@@ -59,8 +59,14 @@ namespace EmployeeManagementAPI.Services
             _repository.Add(model);
         }
 
-        public void UpdateEmployee(EmployeeDto employeeDto)
+        public bool UpdateEmployee(EmployeeDto employeeDto)
         {
+            var existing = _repository.GetById(employeeDto.Id);
+            if (existing == null)
+            {
+                return false;
+            }
+
             var model = new Employee
             {
                 Id = employeeDto.Id,
@@ -70,11 +76,19 @@ namespace EmployeeManagementAPI.Services
             };
 
             _repository.Update(model);
+            return true;
         }
 
-        public void DeleteEmployee(int id)
+        public bool DeleteEmployee(int id)
         {
+            var existing = _repository.GetById(id);
+            if (existing == null)
+            {
+                return false;
+            }
+
             _repository.Delete(id);
+            return true;
         }
 
     }

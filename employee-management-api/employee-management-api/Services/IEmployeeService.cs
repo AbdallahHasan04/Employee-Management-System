@@ -6,7 +6,7 @@ namespace EmployeeManagementAPI.Services
         IEnumerable<EmployeeDto> GetAllEmployees();
         EmployeeDto? GetEmployeeById(int id);
         void CreateEmployee(EmployeeDto employeeDto);
-        void UpdateEmployee(EmployeeDto employeeDto);
-        void DeleteEmployee(int id);
+        bool UpdateEmployee(EmployeeDto employeeDto);
+        bool DeleteEmployee(int id);
     }
 }
