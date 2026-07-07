@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EmployeeService, Employee } from '../../services/employee';
@@ -28,6 +28,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class EmployeesComponent implements OnInit 
 {
   private EmployeeService = inject(EmployeeService);
+  private cdr = inject(ChangeDetectorRef);
 
   employees: Employee[] = [];
   displayedColumns: string[] = ['id', 'name', 'email', 'position', 'actions'];
@@ -37,25 +38,51 @@ export class EmployeesComponent implements OnInit
   editingEmployee: Employee | null = null;
 
   ngOnInit() 
-{
+  {
+    console.log('ngOnInit fired');
     this.loadData();
   }
 
   loadData() 
   {
-    this.employees = [...this.EmployeeService.getEmployees()];
+    console.log('loadData called, about to subscribe');
+    this.EmployeeService.getEmployees().subscribe
+    ({
+      next: (data) => 
+      {
+        console.log('loadData got data:', data);
+        this.employees = [...data];
+        this.cdr.detectChanges();
+      },
+      error: (error) => 
+      {
+        console.error('API Error: Connection dropped.', error);
+        alert('Could not fetch employee list. Verify your backend is running');
+      }
+    })
   }
 
   onAdd() : void 
   {
-    if(this.newName && this.newEmail)
+    if(!this.newName.trim() || !this.newEmail.trim() || !this.newPosition.trim())
       {
-      this.EmployeeService.addEmployee(this.newName, this.newPosition, this.newEmail);
-      this.newName = '';
-      this.newEmail = '';
-      this.newPosition = '';
-      this.loadData();
-    }
+        alert('All fields are required.');
+        return;
+      }
+
+    this.EmployeeService.addEmployee(this.newName, this.newPosition, this.newEmail).subscribe
+    ({
+      next: response => 
+      {
+        console.log(response.message);
+        this.newName = '';
+        this.newEmail = '';
+        this.newPosition = '';
+        this.loadData();
+        this.cdr.detectChanges();
+      },
+      error: (error) => console.error('API Error: Add failed.', error)
+    });
   }
 
   onEdit(employee: Employee) 
@@ -72,17 +99,53 @@ export class EmployeesComponent implements OnInit
   onUpdate() 
   {
     if (this.editingEmployee) 
-      {
-      this.EmployeeService.updateEmployee(this.editingEmployee);
-      this.editingEmployee = null;
-      this.loadData();
-    }
+    {
+      if(!this.editingEmployee.name.trim() || !this.editingEmployee.email.trim() || !this.editingEmployee.position.trim())
+        {
+          alert('All fields are required.');
+          return;
+        }
+
+      this.EmployeeService.updateEmployee(this.editingEmployee).subscribe
+      ({
+        next: (response) => 
+        {
+          console.log(response.message);
+          this.editingEmployee = null;
+          this.loadData();
+          this.cdr.detectChanges();
+        },
+        error: (error) => 
+        {
+          console.error('API Error: Update failed.', error);
+          if(error.status === 404)
+          {
+            alert(error.error?.message || 'Employee not found.');
+          }
+        }
+      });
+    }  
   }
 
   onDelete(id: number) 
   {
-    this.EmployeeService.deleteEmployee(id);
-    this.loadData();
+    this.EmployeeService.deleteEmployee(id).subscribe
+    ({
+      next: (response) => 
+      {
+        console.log(response.message);
+        this.loadData();
+        this.cdr.detectChanges();
+      },
+      error: (error) => 
+      {
+        console.error('API Error: Delete failed.', error);
+        if(error.status === 404)
+        {
+          alert(error.error?.message || 'Employee not found.');
+        }
+      }
+    });
   }
 }
   

@@ -1,6 +1,7 @@
 import { Service } from '@angular/core';
-import { Injectable } from '@angular/core';
-
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Employee 
 {
@@ -18,52 +19,26 @@ export interface Employee
 )
 
 export class EmployeeService {
-    private employees: Employee[] = 
-    [
-        {
-            id: 1,
-            name: 'Abdallah',
-            position: 'Software Engineer',
-            email: 'abdallah@example.com'
-        },
-        {
-            id: 2,
-            name: 'Ali',
-            position: 'Product Manager',
-            email: 'ali@example.com'
-        }
-    ];
+  private http = inject(HttpClient);
+  private apiUrl = 'https://localhost:7038/api/employees';
 
-    private nextId = 3;
-
-    getEmployees(): Employee[] 
+    getEmployees(): Observable<Employee[]> 
     {
-        return this.employees;
+        return this.http.get<Employee[]>(this.apiUrl);
     }
 
-    addEmployee( name: string, position: string, email: string): void 
+    addEmployee(name: string, position: string, email: string): Observable<any> 
     {
-        const newEmployee: Employee = 
-        {
-            id: this.nextId++,
-            name: name,
-            position: position,
-            email: email
-        };
-        this.employees.push(newEmployee);
+        return this.http.post(this.apiUrl, { name, position, email });
     }
 
-    updateEmployee(updatedEmployee: Employee): void 
+    updateEmployee(updatedEmployee: Employee): Observable<any> 
     {
-        const index = this.employees.findIndex(emp => emp.id === updatedEmployee.id);
-        if (index !== -1) 
-        {
-            this.employees[index] = updatedEmployee;
-        }
+        return this.http.put(this.apiUrl, updatedEmployee);    
     }
 
-    deleteEmployee(id: number): void 
+    deleteEmployee(id: number): Observable<any> 
     {
-        this.employees = this.employees.filter(emp => emp.id !== id);
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }
