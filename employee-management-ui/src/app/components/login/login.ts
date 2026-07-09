@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../services/auth';
 
 @Component
 (
@@ -28,6 +29,7 @@ export class LoginComponent
   //injecting needed items
   private formbuilder = inject(FormBuilder);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   loginform : FormGroup;
   errormessage = '';
@@ -47,16 +49,17 @@ export class LoginComponent
   {
     if(this.loginform.valid){
       const { username, password } = this.loginform.value;
-
-      //temp validation, will replace later
-      if( username == 'admin' && password == 'admin')
-      {
-        this.router.navigate(['/employees']);
-      }
-      else
-      {
-        this.errormessage = 'Invalid Username or Password';
-      }
+      
+      this.authService.login({ username, password }).subscribe({
+        next: (response) => {
+          this.errormessage = '';
+          this.router.navigate(['/employees']);
+        },
+        error: (err) => {
+          console.error('Login error details:', err);
+          this.errormessage = 'Invalid Username or Password';
+        }
+      });
     }
   }
 }
