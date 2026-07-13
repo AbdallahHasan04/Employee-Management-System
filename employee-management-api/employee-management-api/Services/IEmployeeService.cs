@@ -1,12 +1,13 @@
 ﻿using EmployeeManagementAPI.DTOs;
+
 namespace EmployeeManagementAPI.Services
 {
     public interface IEmployeeService
     {
-        IEnumerable<EmployeeDto> GetAllEmployees();
-        EmployeeDto? GetEmployeeById(int id);
-        void CreateEmployee(EmployeeDto employeeDto);
-        bool UpdateEmployee(EmployeeDto employeeDto);
-        bool DeleteEmployee(int id);
+        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
+        Task<EmployeeDto?> GetEmployeeByIdAsync(int id);
+        Task<EmployeeDto> CreateEmployeeAsync(EmployeeDto employeeDto, string? createdBy);
+        Task<bool> UpdateEmployeeAsync(EmployeeDto employeeDto, string? modifiedBy);
+        Task<bool> DeleteEmployeeAsync(int id);
     }
 }

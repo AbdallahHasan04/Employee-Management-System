@@ -1,47 +1,47 @@
-﻿using EmployeeManagementAPI.Models;
+﻿using EmployeeManagementAPI.Data;
+using EmployeeManagementAPI.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace EmployeeManagementAPI.Repositories
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private static readonly List<Employee> _employees = new()
-        {
-            new Employee { Id = 1, Name = "Abdallah", Position = "Software Engineer", Email = "abdallah@example.com" },
-            new Employee { Id = 2, Name = "Ali", Position = "Product Manager", Email = "ali@example.com" }
-        };
+        private readonly AppDbContext _context;
 
-        private static int _nextId = 3;
-
-        public IEnumerable<Employee> GetAll()
+        public EmployeeRepository(AppDbContext context)
         {
-            return _employees;
+            _context = context;
         }
 
-        public Employee? GetById(int id)
+        public async Task<IEnumerable<Employee>> GetAllAsync()
         {
-            return _employees.Find(e => e.Id == id);
+            return await _context.Employees.AsNoTracking().ToListAsync();
         }
 
-        public void Add(Employee employee)
+        public async Task<Employee?> GetByIdAsync(int id)
         {
-            employee.Id = _nextId++;
-            _employees.Add(employee);
+            return await _context.Employees.FindAsync(id);
         }
 
-        public void Update(Employee employee)
+        public async Task AddAsync(Employee employee)
         {
-            var index = _employees.FindIndex(e => e.Id == employee.Id);
-            if (index != -1)
-            {
-                _employees[index] = employee;
-            }
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync(); // populates employee.Id
         }
 
-        public void Delete(int id)
+        public async Task UpdateAsync(Employee employee)
         {
-            var employee = GetById(id);
+            _context.Employees.Update(employee);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
             {
-                _employees.Remove(employee);
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
             }
         }
     }

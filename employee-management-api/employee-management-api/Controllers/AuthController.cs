@@ -1,4 +1,6 @@
 ﻿using EmployeeManagementAPI.DTOs;
+using EmployeeManagementAPI.Helpers;
+using EmployeeManagementAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,21 +14,26 @@ namespace EmployeeManagementAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IConfiguration config)
+        public AuthController(IConfiguration config, IUserRepository userRepository)
         {
             _config = config;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            if(loginDto.Username == "admin" && loginDto.Password == "admin")
+            var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
+
+            if (user == null || user.Status != "Active" || !PasswordHasher.Verify(loginDto.Password, user.Password))
             {
-                var token = GenerateJwtToken(loginDto.Username);
-                return Ok(new { token });
+                return Unauthorized(new { message = "Invalid username or password." });
             }
-            return Unauthorized(new { message = "Invalid username or password. " });
+
+            var token = GenerateJwtToken(user.Username);
+            return Ok(new { token });
         }
 
         private string GenerateJwtToken(string username)
@@ -41,8 +48,7 @@ namespace EmployeeManagementAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var token = new JwtSecurityToken
-            (
+            var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,

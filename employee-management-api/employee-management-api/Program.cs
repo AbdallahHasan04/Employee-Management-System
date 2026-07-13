@@ -1,15 +1,20 @@
+using EmployeeManagementAPI.Data;
+using EmployeeManagementAPI.Models;
 using EmployeeManagementAPI.Repositories;
 using EmployeeManagementAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;           
-using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text;
+using EmployeeManagementAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // REGISTER ARHITECTURE LAYERS (DI)
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 builder.Services.AddControllers();
@@ -42,6 +47,10 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 //JWT config
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -80,6 +89,24 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new User
+        {
+            Username = "admin",
+            Name = "Administrator",
+            Password = PasswordHasher.Hash("Admin@123"),
+            Status = "Active",
+            CreatedBy = "system",
+            CreationDate = DateTime.UtcNow
+        });
+        db.SaveChanges();
+    }
+}
 
 // Configure HTTP request pipeline.
 if (app.Environment.IsDevelopment())

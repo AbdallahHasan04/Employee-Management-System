@@ -1,77 +1,245 @@
-<div>
-  <h2> Employees </h2>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Employee Management System</p>
+      <h1>Employee Page</h1>
+    </div>
+    <button mat-stroked-button color="warn" class="logout-btn" (click)="onLogout()">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+  </header>
 
-  <div>
-    @if ( !editingEmployee ) {
-      <mat-form-field appearance="outline">
-        <mat-label> Name </mat-label>
-        <input matInput [(ngModel)]="newName">
-      </mat-form-field>
+  @if (lastGeneratedPassword) {
+    <div class="credentials-banner">
+      <mat-icon>vpn_key</mat-icon>
+      <div class="credentials-text">
+        <strong>Account created for {{ lastCreatedUsername }}</strong>
+        <span>Temporary password: <code>{{ lastGeneratedPassword }}</code> — copy it now, it won't be shown again.</span>
+      </div>
+      <button mat-icon-button (click)="dismissCredentials()" aria-label="Dismiss">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
 
-      <mat-form-field appearance="outline">
-        <mat-label> Email </mat-label>
-        <input matInput [(ngModel)]="newEmail" type="email">
-      </mat-form-field>
+  <section class="card form-card">
+    @if (!editingEmployee) {
+      <h2 class="card-title">New Employee</h2>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Employee No</mat-label>
+          <input matInput [(ngModel)]="newEmployee.employeeNo">
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label> Position </mat-label>
-        <input matInput [(ngModel)]="newPosition">
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Name (English)</mat-label>
+          <input matInput [(ngModel)]="newEmployee.nameEn">
+        </mat-form-field>
 
-      <button mat-raised-button color="primary" (click)="onAdd()">Add</button>
+        <mat-form-field appearance="outline">
+          <mat-label>Name (Arabic)</mat-label>
+          <input matInput [(ngModel)]="newEmployee.nameAr">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="newEmployee.username">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>National No</mat-label>
+          <input matInput [(ngModel)]="newEmployee.nationalNo">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Gender</mat-label>
+          <mat-select [(ngModel)]="newEmployee.gender">
+            <mat-option value="Male">Male</mat-option>
+            <mat-option value="Female">Female</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Birthdate</mat-label>
+          <input matInput type="date" [(ngModel)]="newEmployee.birthdate">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput [(ngModel)]="newEmployee.mobileNumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="newEmployee.email">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Start Working Date</mat-label>
+          <input matInput type="date" [(ngModel)]="newEmployee.startWorkingDate">
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" (click)="onAdd()">
+          <mat-icon>add</mat-icon>
+          Add Employee
+        </button>
+      </div>
 
     } @else {
-      <mat-form-field appearance="outline">
-        <mat-label> Name </mat-label>
-        <input matInput [(ngModel)]="editingEmployee.name">
-      </mat-form-field>
+      <h2 class="card-title">Edit Employee</h2>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Employee No</mat-label>
+          <input matInput [(ngModel)]="editingEmployee.employeeNo">
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label> Email </mat-label>
-        <input matInput [(ngModel)]="editingEmployee.email" type="email">
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Name (English)</mat-label>
+          <input matInput [(ngModel)]="editingEmployee.nameEn">
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label> Position </mat-label>
-        <input matInput [(ngModel)]="editingEmployee.position">
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Name (Arabic)</mat-label>
+          <input matInput [(ngModel)]="editingEmployee.nameAr">
+        </mat-form-field>
 
-      <button mat-raised-button color="accent" (click)="onUpdate()">Update</button>
-      <button mat-button (click)="editingEmployee = null">Cancel</button>
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput [ngModel]="editingEmployee.username" disabled>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>National No</mat-label>
+          <input matInput [(ngModel)]="editingEmployee.nationalNo">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="editingEmployee.status">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput [(ngModel)]="editingEmployee.mobileNumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="editingEmployee.email">
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="accent" (click)="onUpdate()">
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+        <button mat-button (click)="editingEmployee = null">Cancel</button>
+      </div>
     }
-  </div>
+  </section>
 
-  <table mat-table [dataSource]="employees" class="mat-elevation-z2" style="width: 100%; margin-top: 20px;">
-    
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let item"> {{item.id}} </td>
-    </ng-container>
+  <section class="card table-card">
+    <div class="table-card-header">
+      <h2 class="card-title">All Employees</h2>
+      <span class="record-count">{{ employees.length }} {{ employees.length === 1 ? 'record' : 'records' }}</span>
+    </div>
 
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let item"> {{item.name}} </td>
-    </ng-container>
+    <div class="table-scroll">
+      <table mat-table [dataSource]="employees" class="roster-table">
 
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let item"> {{item.email}} </td>
-    </ng-container>
+        <ng-container matColumnDef="employeeNo">
+          <th mat-header-cell *matHeaderCellDef> Employee No </th>
+          <td mat-cell *matCellDef="let item"> {{item.employeeNo}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef> Position </th>
-      <td mat-cell *matCellDef="let item"> {{item.position}} </td>
-    </ng-container>
+        <ng-container matColumnDef="nameEn">
+          <th mat-header-cell *matHeaderCellDef> Name (EN) </th>
+          <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef> Actions </th>
-      <td mat-cell *matCellDef="let item">
-        <button mat-button color="primary" (click)="onEdit(item)">Edit</button>
-        <button mat-button color="warn" (click)="onDelete(item.id)">Delete</button>
-      </td>
-    </ng-container>
+        <ng-container matColumnDef="nameAr">
+          <th mat-header-cell *matHeaderCellDef> Name (AR) </th>
+          <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <td mat-cell *matCellDef="let item"> {{item.username}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nationalNo">
+          <th mat-header-cell *matHeaderCellDef> National No </th>
+          <td mat-cell *matCellDef="let item"> {{item.nationalNo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="gender">
+          <th mat-header-cell *matHeaderCellDef> Gender </th>
+          <td mat-cell *matCellDef="let item"> {{item.gender || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="birthdate">
+          <th mat-header-cell *matHeaderCellDef> Birthdate </th>
+          <td mat-cell *matCellDef="let item"> {{item.birthdate ? (item.birthdate | date:'mediumDate') : '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="mobileNumber">
+          <th mat-header-cell *matHeaderCellDef> Mobile </th>
+          <td mat-cell *matCellDef="let item"> {{item.mobileNumber || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let item"> {{item.email || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="startWorkingDate">
+          <th mat-header-cell *matHeaderCellDef> Start Date </th>
+          <td mat-cell *matCellDef="let item"> {{item.startWorkingDate ? (item.startWorkingDate | date:'mediumDate') : '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let item">
+            <button
+              type="button"
+              class="pill pill-button"
+              [ngClass]="statusClass(item.status)"
+              (click)="toggleStatus(item)"
+              title="Click to toggle status">
+              {{item.status}}
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button color="primary" (click)="onEdit(item)" aria-label="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(item.id)" aria-label="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    @if (employees.length === 0) {
+      <div class="empty-state">
+        <mat-icon>group_off</mat-icon>
+        <p>No employees yet. Add the first one above.</p>
+      </div>
+    }
+  </section>
 </div>
