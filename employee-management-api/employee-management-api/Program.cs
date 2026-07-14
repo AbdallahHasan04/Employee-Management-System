@@ -1,21 +1,21 @@
 using EmployeeManagementAPI.Data;
-using EmployeeManagementAPI.Models;
 using EmployeeManagementAPI.Repositories;
 using EmployeeManagementAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;           
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using EmployeeManagementAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // REGISTER ARHITECTURE LAYERS (DI)
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -89,24 +89,6 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (!db.Users.Any())
-    {
-        db.Users.Add(new User
-        {
-            Username = "admin",
-            Name = "Administrator",
-            Password = PasswordHasher.Hash("Admin@123"),
-            Status = "Active",
-            CreatedBy = "system",
-            CreationDate = DateTime.UtcNow
-        });
-        db.SaveChanges();
-    }
-}
 
 // Configure HTTP request pipeline.
 if (app.Environment.IsDevelopment())

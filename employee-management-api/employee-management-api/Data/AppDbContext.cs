@@ -8,6 +8,7 @@ namespace EmployeeManagementAPI.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +58,24 @@ namespace EmployeeManagementAPI.Data
                       .HasForeignKey<Employee>(e => e.Username)
                       .HasPrincipalKey<User>(u => u.Username)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // departments
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.ToTable("DEPARTMENTS");
+                entity.Property(d => d.Id).HasColumnName("ID");
+                entity.Property(d => d.DepartmentCode).HasColumnName("DEPARTMENT_CODE");
+                entity.Property(d => d.NameEn).HasColumnName("NAME_EN");
+                entity.Property(d => d.NameAr).HasColumnName("NAME_AR");
+                entity.Property(d => d.Description).HasColumnName("DESCRIPTION");
+                entity.Property(d => d.Status).HasColumnName("STATUS");
+                entity.Property(d => d.CreatedBy).HasColumnName("CREATED_BY");
+                entity.Property(d => d.CreationDate).HasColumnName("CREATION_DATE");
+                entity.Property(d => d.ModifiedBy).HasColumnName("MODIFIED_BY");
+                entity.Property(d => d.ModificationDate).HasColumnName("MODIFICATION_DATE");
+
+                entity.HasIndex(d => d.DepartmentCode).IsUnique();
             });
         }
     }

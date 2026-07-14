@@ -1,0 +1,13 @@
+<nav class="app-nav">
+  <div class="app-nav__brand">
+    <span class="app-nav__mark">EM</span>
+    <span class="app-nav__title">Employee Management</span>
+  </div>
+
+  <div class="app-nav__links">
+    <a routerLink="/employees" routerLinkActive="active" class="app-nav__link">Employees</a>
+    <a routerLink="/departments" routerLinkActive="active" class="app-nav__link">Departments</a>
+  </div>
+
+  <button class="app-nav__logout" (click)="onLogout()">Logout</button>
+</nav>

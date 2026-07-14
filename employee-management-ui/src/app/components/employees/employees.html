@@ -1,13 +1,10 @@
+<app-navbar></app-navbar>
 <div class="page">
   <header class="page-header">
     <div>
       <p class="eyebrow">Employee Management System</p>
       <h1>Employee Page</h1>
     </div>
-    <button mat-stroked-button color="warn" class="logout-btn" (click)="onLogout()">
-      <mat-icon>logout</mat-icon>
-      Logout
-    </button>
   </header>
 
   @if (lastGeneratedPassword) {

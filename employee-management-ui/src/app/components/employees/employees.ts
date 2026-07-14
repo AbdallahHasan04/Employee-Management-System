@@ -1,10 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { EmployeeService, Employee, NewEmployee } from '../../services/employee';
-import { AuthService } from '../../services/auth';
-
+import { NavbarComponent } from '../navbar/navbar';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule,
+    MatSelectModule, MatIconModule, NavbarComponent,
   ],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
@@ -25,8 +23,6 @@ import { MatIconModule } from '@angular/material/icon';
 export class EmployeesComponent implements OnInit
 {
   private employeeService = inject(EmployeeService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
   employees: Employee[] = [];
@@ -137,12 +133,6 @@ export class EmployeesComponent implements OnInit
     });
   }
 
-  onLogout(): void
-  {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
   dismissCredentials()
   {
     this.lastCreatedUsername = null;
@@ -155,18 +145,18 @@ export class EmployeesComponent implements OnInit
   }
 
   toggleStatus(item: Employee): void
-{
-  const newStatus = item.status === 'Active' ? 'Inactive' : 'Active';
-  const updated: Employee = { ...item, status: newStatus };
+  {
+    const newStatus = item.status === 'Active' ? 'Inactive' : 'Active';
+    const updated: Employee = { ...item, status: newStatus };
 
-  this.employeeService.updateEmployee(updated).subscribe({
-    next: () => {
-      this.loadData();
-    },
-    error: (error) => {
-      console.error('API Error: Status toggle failed.', error);
-      alert('Could not update status.');
-    }
-  });
-}
+    this.employeeService.updateEmployee(updated).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: (error) => {
+        console.error('API Error: Status toggle failed.', error);
+        alert('Could not update status.');
+      }
+    });
+  }
 }
