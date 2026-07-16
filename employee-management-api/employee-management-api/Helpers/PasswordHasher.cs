@@ -28,7 +28,7 @@ namespace EmployeeManagementAPI.Helpers
             return CryptographicOperations.FixedTimeEquals(key, attemptedKey);
         }
 
-        // Deterministic password from the employee's ID
+        //  password from the employee's ID
 
         public static string GenerateFromEmployeeId(int employeeId)
         {

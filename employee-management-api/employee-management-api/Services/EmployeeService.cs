@@ -37,7 +37,7 @@ namespace EmployeeManagementAPI.Services
             try
             {
                 // create the User first (FK target) with a throwaway placeholder password 
-                // it gets overwritten once we know the Employee's real ID.
+                // gets overwritten once we know the Employee's real ID.
                 var user = new User
                 {
                     Username = dto.Username,
@@ -63,6 +63,7 @@ namespace EmployeeManagementAPI.Services
                     MobileNumber = dto.MobileNumber,
                     Email = dto.Email,
                     StartWorkingDate = dto.StartWorkingDate,
+                    DepartmentId = dto.DepartmentId,
                     CreatedBy = createdBy,
                     CreationDate = DateTime.UtcNow
                 };
@@ -105,12 +106,12 @@ namespace EmployeeManagementAPI.Services
             existing.MobileNumber = dto.MobileNumber;
             existing.Email = dto.Email;
             existing.StartWorkingDate = dto.StartWorkingDate;
+            existing.DepartmentId = dto.DepartmentId;
             existing.ModifiedBy = modifiedBy;
             existing.ModificationDate = DateTime.UtcNow;
 
             await _employeeRepository.UpdateAsync(existing);
 
-            // (Username itself never changes)
             var user = await _userRepository.GetByUsernameAsync(existing.Username);
             if (user != null && user.Name != existing.NameEn)
             {
@@ -131,7 +132,7 @@ namespace EmployeeManagementAPI.Services
                 return false;
             }
 
-            // Child (Employee) must go before parent (User) — matches the FK direction
+            // Child (Employee) must go before parent (User) for FK
             await _employeeRepository.DeleteAsync(id);
             await _userRepository.DeleteByUsernameAsync(existing.Username);
             return true;
@@ -153,6 +154,8 @@ namespace EmployeeManagementAPI.Services
                 MobileNumber = employee.MobileNumber,
                 Email = employee.Email,
                 StartWorkingDate = employee.StartWorkingDate,
+                DepartmentId = employee.DepartmentId,
+                DepartmentName = employee.Department?.NameEn,
                 CreatedBy = employee.CreatedBy,
                 CreationDate = employee.CreationDate,
                 ModifiedBy = employee.ModifiedBy,

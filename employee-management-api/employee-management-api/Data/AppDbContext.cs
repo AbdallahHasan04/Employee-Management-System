@@ -47,16 +47,22 @@ namespace EmployeeManagementAPI.Data
                 entity.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER");
                 entity.Property(e => e.Email).HasColumnName("EMAIL");
                 entity.Property(e => e.StartWorkingDate).HasColumnName("START_WORKING_DATE");
+                entity.Property(e => e.DepartmentId).HasColumnName("DEPARTMENT_ID");
                 entity.Property(e => e.CreatedBy).HasColumnName("CREATED_BY");
                 entity.Property(e => e.CreationDate).HasColumnName("CREATION_DATE");
                 entity.Property(e => e.ModifiedBy).HasColumnName("MODIFIED_BY");
                 entity.Property(e => e.ModificationDate).HasColumnName("MODIFICATION_DATE");
 
-                // Employee.Username -> Users.Username (FK)
+                // FK
                 entity.HasOne<User>()
                       .WithOne()
                       .HasForeignKey<Employee>(e => e.Username)
                       .HasPrincipalKey<User>(u => u.Username)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Department)
+                      .WithMany()
+                      .HasForeignKey(e => e.DepartmentId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
 

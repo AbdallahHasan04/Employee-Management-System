@@ -14,6 +14,8 @@
         public string? MobileNumber { get; set; }
         public string? Email { get; set; }
         public DateTime? StartWorkingDate { get; set; }
+        public int DepartmentId { get; set; }
+        public string? DepartmentName { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string? ModifiedBy { get; set; }

@@ -9,5 +9,6 @@ namespace EmployeeManagementAPI.Repositories
         Task AddAsync(Employee employee);
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(int id);
+        Task<bool> ExistsByDepartmentIdAsync(int departmentId);
     }
 }

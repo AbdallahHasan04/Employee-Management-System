@@ -2,6 +2,7 @@
 
 namespace EmployeeManagementAPI.Repositories
 {
+  
     public interface IDepartmentRepository
     {
         Task<IEnumerable<Department>> GetAllAsync();

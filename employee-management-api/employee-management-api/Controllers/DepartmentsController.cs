@@ -60,12 +60,14 @@ namespace EmployeeManagementAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var deleted = await _service.DeleteDepartmentAsync(id);
-            if (!deleted)
+            var result = await _service.DeleteDepartmentAsync(id);
+
+            return result switch
             {
-                return NotFound(new { message = $"Cannot delete. Department with ID {id} not found." });
-            }
-            return Ok(new { message = "Department deleted successfully!" });
+                DepartmentDeleteResult.NotFound => NotFound(new { message = $"Cannot delete. Department with ID {id} not found." }),
+                DepartmentDeleteResult.HasEmployees => Conflict(new { message = "This department cannot be deleted because it is currently assigned to one or more employees." }),
+                _ => Ok(new { message = "Department deleted successfully!" })
+            };
         }
     }
 }

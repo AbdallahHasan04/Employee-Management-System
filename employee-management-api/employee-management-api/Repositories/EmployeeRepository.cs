@@ -15,12 +15,12 @@ namespace EmployeeManagementAPI.Repositories
 
         public async Task<IEnumerable<Employee>> GetAllAsync()
         {
-            return await _context.Employees.AsNoTracking().ToListAsync();
+            return await _context.Employees.AsNoTracking().Include(e => e.Department).ToListAsync();
         }
 
         public async Task<Employee?> GetByIdAsync(int id)
         {
-            return await _context.Employees.FindAsync(id);
+            return await _context.Employees.Include(e => e.Department).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task AddAsync(Employee employee)
@@ -43,6 +43,11 @@ namespace EmployeeManagementAPI.Repositories
                 _context.Employees.Remove(employee);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> ExistsByDepartmentIdAsync(int departmentId)
+        {
+            return await _context.Employees.AnyAsync(e => e.DepartmentId == departmentId);
         }
     }
 }

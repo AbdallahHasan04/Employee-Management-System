@@ -7,10 +7,12 @@ namespace EmployeeManagementAPI.Services
     public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository)
         {
             _departmentRepository = departmentRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
@@ -38,7 +40,7 @@ namespace EmployeeManagementAPI.Services
                 CreationDate = DateTime.UtcNow
             };
 
-            await _departmentRepository.AddAsync(department); // populate department.Id
+            await _departmentRepository.AddAsync(department); // populates department.Id
             return ToDto(department);
         }
 
@@ -62,16 +64,22 @@ namespace EmployeeManagementAPI.Services
             return true;
         }
 
-        public async Task<bool> DeleteDepartmentAsync(int id)
+        public async Task<DepartmentDeleteResult> DeleteDepartmentAsync(int id)
         {
             var existing = await _departmentRepository.GetByIdAsync(id);
             if (existing == null)
             {
-                return false;
+                return DepartmentDeleteResult.NotFound;
+            }
+
+            var hasEmployees = await _employeeRepository.ExistsByDepartmentIdAsync(id);
+            if (hasEmployees)
+            {
+                return DepartmentDeleteResult.HasEmployees;
             }
 
             await _departmentRepository.DeleteAsync(id);
-            return true;
+            return DepartmentDeleteResult.Success;
         }
 
         private static DepartmentDto ToDto(Department department)

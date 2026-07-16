@@ -9,25 +9,27 @@ export interface Employee
     nameEn: string;
     nameAr: string;
     username: string;
-    birthdate: string | null;       // ISO date string from/to the API
+    birthdate: string | null;
     nationalNo: string;
     gender: string;
     status: string;
     mobileNumber: string | null;
     email: string | null;
     startWorkingDate: string | null;
+    departmentId: number;
+    departmentName?: string;
     createdBy: string | null;
     creationDate: string;
     modifiedBy: string | null;
     modificationDate: string | null;
-    generatedPassword?: string;      // only present right after creation
+    generatedPassword?: string;
 }
 
-// Used for the add form — the fields an admin actually fills in
+// Used for the add form
 export type NewEmployee = Pick<Employee,
   'employeeNo' | 'nameEn' | 'nameAr' | 'username' | 'birthdate' |
   'nationalNo' | 'gender' | 'mobileNumber' | 'email' | 'startWorkingDate'
->;
+> & { departmentId: number | null };
 
 export interface CreateEmployeeResponse
 {
