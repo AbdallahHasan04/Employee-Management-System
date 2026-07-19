@@ -1,0 +1,14 @@
+<div class="not-found-page">
+  <div class="not-found-card">
+    @if (isExpiredSession) {
+      <span class="status-code">401</span>
+      <h1>Unauthorized</h1>
+      <p>Your session has expired and you are not authorized to view this page. Please log in again to continue.</p>
+    } @else {
+      <span class="status-code">404</span>
+      <h1>Page not found</h1>
+      <p>The page you're looking for doesn't exist or may have been moved.</p>
+    }
+    <a routerLink="/login" class="back-link">Go to Login</a>
+  </div>
+</div>

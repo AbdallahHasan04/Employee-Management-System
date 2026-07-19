@@ -32,11 +32,15 @@ namespace EmployeeManagementAPI.Controllers
                 return Unauthorized(new { message = "Invalid username or password." });
             }
 
-            var token = GenerateJwtToken(user.Username);
-            return Ok(new { token });
+            var jwtSettings = _config.GetSection("Jwt");
+            var expirationMinutes = int.TryParse(jwtSettings["ExpirationMinutes"], out var minutes) ? minutes : 30;
+            var expiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes);
+
+            var token = GenerateJwtToken(user.Username, expiresAt);
+            return Ok(new { token, expiresAt });
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(string username, DateTime expiresAt)
         {
             var jwtSettings = _config.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
@@ -52,7 +56,7 @@ namespace EmployeeManagementAPI.Controllers
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: expiresAt,
                 signingCredentials: creds
             );
 
