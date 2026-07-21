@@ -1,15 +1,15 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { DepartmentService, Department, NewDepartment } from '../../services/department';
-import { AuthService } from '../../services/auth';
 import { NavbarComponent } from '../navbar/navbar';
-import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, NavbarComponent, MatSelectModule,
+    MatSelectModule, MatIconModule, NavbarComponent, TranslatePipe,
   ],
   templateUrl: './departments.html',
   styleUrl: './departments.css',
@@ -25,9 +25,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class DepartmentsComponent implements OnInit
 {
   private departmentService = inject(DepartmentService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   departments: Department[] = [];
   displayedColumns: string[] = ['departmentCode', 'nameEn', 'nameAr', 'description', 'status', 'actions'];
@@ -54,7 +53,7 @@ export class DepartmentsComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
-        alert('Could not fetch department list. Verify your backend is running');
+        alert(this.translate.instant('departments.fetchError'));
       }
     });
   }
@@ -63,7 +62,7 @@ export class DepartmentsComponent implements OnInit
   {
     const required = [this.newDepartment.departmentCode, this.newDepartment.nameEn, this.newDepartment.nameAr];
     if (required.some(f => !f?.trim())) {
-      alert('Department Code, Name (EN) and Name (AR) are required.');
+      alert(this.translate.instant('departments.requiredFields'));
       return;
     }
 
@@ -87,7 +86,7 @@ export class DepartmentsComponent implements OnInit
     if (!this.editingDepartment) return;
 
     if (!this.editingDepartment.nameEn.trim() || !this.editingDepartment.nameAr.trim()) {
-      alert('Name (EN) and Name (AR) are required.');
+      alert(this.translate.instant('departments.updateRequiredFields'));
       return;
     }
 
@@ -101,7 +100,7 @@ export class DepartmentsComponent implements OnInit
       error: (error) => {
         console.error('API Error: Update failed.', error);
         if (error.status === 404) {
-          alert(error.error?.message || 'Department not found.');
+          alert(error.error?.message || this.translate.instant('departments.notFound'));
         }
       }
     });
@@ -117,7 +116,7 @@ export class DepartmentsComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Delete failed.', error);
-        alert(error.error?.message || 'Could not delete department.');
+        alert(error.error?.message || this.translate.instant('departments.deleteError'));
       }
     });
   }
@@ -125,6 +124,11 @@ export class DepartmentsComponent implements OnInit
   statusClass(status: string): string
   {
     return status?.toLowerCase() === 'active' ? 'pill-active' : 'pill-inactive';
+  }
+
+  statusLabelKey(status: string): string
+  {
+    return status?.toLowerCase() === 'active' ? 'common.statusActive' : 'common.statusInactive';
   }
 
   toggleStatus(item: Department): void
@@ -138,7 +142,7 @@ export class DepartmentsComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Status toggle failed.', error);
-        alert('Could not update status.');
+        alert(this.translate.instant('departments.statusUpdateError'));
       }
     });
   }

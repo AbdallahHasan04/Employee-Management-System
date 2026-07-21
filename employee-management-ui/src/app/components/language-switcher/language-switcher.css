@@ -1,0 +1,25 @@
+.lang-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', Roboto, sans-serif;
+  transition: background-color 0.15s ease;
+}
+
+.lang-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.lang-toggle--light {
+  border-color: #16453f;
+  color: #16453f;
+}
+
+.lang-toggle--light:hover {
+  background: rgba(22, 69, 63, 0.08);
+}

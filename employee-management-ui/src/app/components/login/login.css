@@ -1,3 +1,17 @@
+.login-page 
+{
+  position: relative;
+  min-height: 100vh;
+}
+
+.login-topbar 
+{
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  z-index: 10;
+}
+
 .login-wrapper 
 {
   display: flex;

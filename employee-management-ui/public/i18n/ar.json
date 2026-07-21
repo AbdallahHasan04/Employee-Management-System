@@ -1,0 +1,87 @@
+{
+  "common": {
+    "eyebrow": "نظام إدارة الموظفين",
+    "actions": "إجراءات",
+    "cancel": "إلغاء",
+    "saveChanges": "حفظ التغييرات",
+    "record": "سجل",
+    "records": "سجلات",
+    "statusActive": "متصل",
+    "statusInactive": "غير متصل"
+  },
+  "nav": {
+    "brand": "إدارة الموظفين",
+    "employees": "الموظفون",
+    "departments": "الأقسام",
+    "logout": "تسجيل الخروج"
+  },
+  "lang": {
+    "switchTo": "English"
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "submit": "دخول",
+    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة"
+  },
+  "employees": {
+    "title": "صفحة الموظفين",
+    "newTitle": "إضافة موظف",
+    "editTitle": "تعديل الموظف",
+    "employeeNo": "الرقم الوظيفي",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameAr": "الاسم (عربي)",
+    "department": "القسم",
+    "username": "اسم المستخدم",
+    "nationalNo": "الرقم الوطني",
+    "gender": "الجنس",
+    "genderMale": "ذكر",
+    "genderFemale": "أنثى",
+    "birthdate": "تاريخ الميلاد",
+    "mobileNumber": "رقم الموبايل",
+    "email": "البريد الإلكتروني",
+    "startWorkingDate": "تاريخ بدء العمل",
+    "status": "الحالة",
+    "addEmployee": "إضافة موظف",
+    "allEmployees": "جميع الموظفين",
+    "noEmployees": "لا يوجد موظفون بعد. أضف أول موظف أعلاه.",
+    "credentialsCreated": "تم إنشاء حساب لـ {{username}}",
+    "credentialsPasswordLabel": "كلمة المرور :",
+    "credentialsPasswordNote": "— انسخها الآن، لن تظهر مرة أخرى.",
+    "fetchError": "مشكلة في قائمة الموظفين. تأكد من تشغيل البرنامج",
+    "requiredFields": "الرقم الوظيفي والاسم (إنجليزي) واسم المستخدم والرقم الوطني حقول مطلوبة.",
+    "departmentRequired": "يرجى اختيار القسم.",
+    "updateRequiredFields": "الاسم (إنجليزي) والرقم الوطني والقسم حقول مطلوبة.",
+    "notFound": "الموظف غير موجود.",
+    "statusUpdateError": "تعذر تحديث الحالة."
+  },
+  "departments": {
+    "title": "صفحة الأقسام",
+    "newTitle": "إضافة قسم",
+    "editTitle": "تعديل القسم",
+    "departmentCode": "رمز القسم",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameAr": "الاسم (عربي)",
+    "description": "الوصف",
+    "status": "الحالة",
+    "addDepartment": "إضافة قسم",
+    "allDepartments": "جميع الأقسام",
+    "noDepartments": "لا توجد أقسام بعد. أضف أول قسم أعلاه.",
+    "fetchError": "تعذر جلب قائمة الأقسام. تأكد من تشغيل الخادم",
+    "requiredFields": "رمز القسم والاسم (إنجليزي) والاسم (عربي) حقول مطلوبة.",
+    "updateRequiredFields": "الاسم (إنجليزي) والاسم (عربي) حقول مطلوبة.",
+    "notFound": "القسم غير موجود.",
+    "deleteError": "تعذر حذف القسم.",
+    "statusUpdateError": "تعذر تحديث الحالة."
+  },
+  "notFound": {
+    "title404": "الصفحة غير موجودة",
+    "message404": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "title401": "غير مصرح",
+    "message401": "انتهت صلاحية جلستك ولا يمكنك الوصول إلى هذه الصفحة. يرجى تسجيل الدخول مرة أخرى للمتابعة.",
+    "backToLogin": "الذهاب إلى تسجيل الدخول"
+  }
+}

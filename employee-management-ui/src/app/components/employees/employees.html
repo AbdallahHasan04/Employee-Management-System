@@ -2,8 +2,8 @@
 <div class="page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Employee Management System</p>
-      <h1>Employee Page</h1>
+      <p class="eyebrow">{{ 'common.eyebrow' | translate }}</p>
+      <h1>{{ 'employees.title' | translate }}</h1>
     </div>
   </header>
 
@@ -11,8 +11,8 @@
     <div class="credentials-banner">
       <mat-icon>vpn_key</mat-icon>
       <div class="credentials-text">
-        <strong>Account created for {{ lastCreatedUsername }}</strong>
-        <span>Temporary password: <code>{{ lastGeneratedPassword }}</code> — copy it now, it won't be shown again.</span>
+        <strong>{{ 'employees.credentialsCreated' | translate:{ username: lastCreatedUsername } }}</strong>
+        <span>{{ 'employees.credentialsPasswordLabel' | translate }} <code>{{ lastGeneratedPassword }}</code> {{ 'employees.credentialsPasswordNote' | translate }}</span>
       </div>
       <button mat-icon-button (click)="dismissCredentials()" aria-label="Dismiss">
         <mat-icon>close</mat-icon>
@@ -22,25 +22,25 @@
 
   <section class="card form-card">
     @if (!editingEmployee) {
-      <h2 class="card-title">New Employee</h2>
+      <h2 class="card-title">{{ 'employees.newTitle' | translate }}</h2>
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>Employee No</mat-label>
+          <mat-label>{{ 'employees.employeeNo' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.employeeNo">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (English)</mat-label>
+          <mat-label>{{ 'employees.nameEn' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.nameEn">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (Arabic)</mat-label>
+          <mat-label>{{ 'employees.nameAr' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.nameAr">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Department</mat-label>
+          <mat-label>{{ 'employees.department' | translate }}</mat-label>
           <mat-select [(ngModel)]="newEmployee.departmentId">
             @for (dept of departments; track dept.id) {
               <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
@@ -49,40 +49,40 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Username</mat-label>
+          <mat-label>{{ 'employees.username' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.username">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>National No</mat-label>
+          <mat-label>{{ 'employees.nationalNo' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.nationalNo">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Gender</mat-label>
+          <mat-label>{{ 'employees.gender' | translate }}</mat-label>
           <mat-select [(ngModel)]="newEmployee.gender">
-            <mat-option value="Male">Male</mat-option>
-            <mat-option value="Female">Female</mat-option>
+            <mat-option value="Male">{{ 'employees.genderMale' | translate }}</mat-option>
+            <mat-option value="Female">{{ 'employees.genderFemale' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Birthdate</mat-label>
+          <mat-label>{{ 'employees.birthdate' | translate }}</mat-label>
           <input matInput type="date" [(ngModel)]="newEmployee.birthdate">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Mobile Number</mat-label>
+          <mat-label>{{ 'employees.mobileNumber' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.mobileNumber">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'employees.email' | translate }}</mat-label>
           <input matInput type="email" [(ngModel)]="newEmployee.email">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Start Working Date</mat-label>
+          <mat-label>{{ 'employees.startWorkingDate' | translate }}</mat-label>
           <input matInput type="date" [(ngModel)]="newEmployee.startWorkingDate">
         </mat-form-field>
       </div>
@@ -90,30 +90,30 @@
       <div class="form-actions">
         <button mat-raised-button color="primary" (click)="onAdd()">
           <mat-icon>add</mat-icon>
-          Add Employee
+          {{ 'employees.addEmployee' | translate }}
         </button>
       </div>
 
     } @else {
-      <h2 class="card-title">Edit Employee</h2>
+      <h2 class="card-title">{{ 'employees.editTitle' | translate }}</h2>
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>Employee No</mat-label>
+          <mat-label>{{ 'employees.employeeNo' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingEmployee.employeeNo">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (English)</mat-label>
+          <mat-label>{{ 'employees.nameEn' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingEmployee.nameEn">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (Arabic)</mat-label>
+          <mat-label>{{ 'employees.nameAr' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingEmployee.nameAr">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Department</mat-label>
+          <mat-label>{{ 'employees.department' | translate }}</mat-label>
           <mat-select [(ngModel)]="editingEmployee.departmentId">
             @for (dept of departments; track dept.id) {
               <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
@@ -122,30 +122,30 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Username</mat-label>
+          <mat-label>{{ 'employees.username' | translate }}</mat-label>
           <input matInput [ngModel]="editingEmployee.username" disabled>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>National No</mat-label>
+          <mat-label>{{ 'employees.nationalNo' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingEmployee.nationalNo">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
+          <mat-label>{{ 'employees.status' | translate }}</mat-label>
           <mat-select [(ngModel)]="editingEmployee.status">
-            <mat-option value="Active">Active</mat-option>
-            <mat-option value="Inactive">Inactive</mat-option>
+            <mat-option value="Active">{{ 'common.statusActive' | translate }}</mat-option>
+            <mat-option value="Inactive">{{ 'common.statusInactive' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Mobile Number</mat-label>
+          <mat-label>{{ 'employees.mobileNumber' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingEmployee.mobileNumber">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'employees.email' | translate }}</mat-label>
           <input matInput type="email" [(ngModel)]="editingEmployee.email">
         </mat-form-field>
       </div>
@@ -153,79 +153,79 @@
       <div class="form-actions">
         <button mat-raised-button color="accent" (click)="onUpdate()">
           <mat-icon>save</mat-icon>
-          Save Changes
+          {{ 'common.saveChanges' | translate }}
         </button>
-        <button mat-button (click)="editingEmployee = null">Cancel</button>
+        <button mat-button (click)="editingEmployee = null">{{ 'common.cancel' | translate }}</button>
       </div>
     }
   </section>
 
   <section class="card table-card">
     <div class="table-card-header">
-      <h2 class="card-title">All Employees</h2>
-      <span class="record-count">{{ employees.length }} {{ employees.length === 1 ? 'record' : 'records' }}</span>
+      <h2 class="card-title">{{ 'employees.allEmployees' | translate }}</h2>
+      <span class="record-count">{{ employees.length }} {{ (employees.length === 1 ? 'common.record' : 'common.records') | translate }}</span>
     </div>
 
     <div class="table-scroll">
       <table mat-table [dataSource]="employees" class="roster-table">
 
         <ng-container matColumnDef="employeeNo">
-          <th mat-header-cell *matHeaderCellDef> Employee No </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.employeeNo' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.employeeNo}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameEn">
-          <th mat-header-cell *matHeaderCellDef> Name (EN) </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nameEn' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameAr">
-          <th mat-header-cell *matHeaderCellDef> Name (AR) </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nameAr' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
         </ng-container>
 
         <ng-container matColumnDef="departmentName">
-          <th mat-header-cell *matHeaderCellDef> Department </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.department' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.departmentName || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.username' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.username}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nationalNo">
-          <th mat-header-cell *matHeaderCellDef> National No </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nationalNo' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nationalNo}} </td>
         </ng-container>
 
         <ng-container matColumnDef="gender">
-          <th mat-header-cell *matHeaderCellDef> Gender </th>
-          <td mat-cell *matCellDef="let item"> {{item.gender || '—'}} </td>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.gender' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.gender ? (genderLabelKey(item.gender) | translate) : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="birthdate">
-          <th mat-header-cell *matHeaderCellDef> Birthdate </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.birthdate' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.birthdate ? (item.birthdate | date:'mediumDate') : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="mobileNumber">
-          <th mat-header-cell *matHeaderCellDef> Mobile </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.mobileNumber' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.mobileNumber || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.email' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.email || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="startWorkingDate">
-          <th mat-header-cell *matHeaderCellDef> Start Date </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.startWorkingDate' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.startWorkingDate ? (item.startWorkingDate | date:'mediumDate') : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.status' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button
               type="button"
@@ -233,13 +233,13 @@
               [ngClass]="statusClass(item.status)"
               (click)="toggleStatus(item)"
               title="Click to toggle status">
-              {{item.status}}
+              {{ statusLabelKey(item.status) | translate }}
             </button>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'common.actions' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button mat-icon-button color="primary" (click)="onEdit(item)" aria-label="Edit">
               <mat-icon>edit</mat-icon>
@@ -258,7 +258,7 @@
     @if (employees.length === 0) {
       <div class="empty-state">
         <mat-icon>group_off</mat-icon>
-        <p>No employees yet. Add the first one above.</p>
+        <p>{{ 'employees.noEmployees' | translate }}</p>
       </div>
     }
   </section>

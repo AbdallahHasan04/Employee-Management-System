@@ -1,13 +1,16 @@
 <nav class="app-nav">
   <div class="app-nav__brand">
     <span class="app-nav__mark">EM</span>
-    <span class="app-nav__title">Employee Management</span>
+    <span class="app-nav__title">{{ 'nav.brand' | translate }}</span>
   </div>
 
   <div class="app-nav__links">
-    <a routerLink="/employees" routerLinkActive="active" class="app-nav__link">Employees</a>
-    <a routerLink="/departments" routerLinkActive="active" class="app-nav__link">Departments</a>
+    <a routerLink="/employees" routerLinkActive="active" class="app-nav__link">{{ 'nav.employees' | translate }}</a>
+    <a routerLink="/departments" routerLinkActive="active" class="app-nav__link">{{ 'nav.departments' | translate }}</a>
   </div>
 
-  <button class="app-nav__logout" (click)="onLogout()">Logout</button>
+  <div class="app-nav__actions">
+    <app-language-switcher variant="dark"></app-language-switcher>
+    <button class="app-nav__logout" (click)="onLogout()">{{ 'nav.logout' | translate }}</button>
+  </div>
 </nav>

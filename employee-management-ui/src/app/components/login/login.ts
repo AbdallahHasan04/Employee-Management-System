@@ -5,7 +5,9 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 @Component
 (
@@ -17,7 +19,9 @@ import { AuthService } from '../../services/auth';
   ReactiveFormsModule,
   MatFormFieldModule, 
   MatInputModule, 
-  MatButtonModule   
+  MatButtonModule,
+  TranslatePipe,
+  LanguageSwitcherComponent
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -29,6 +33,7 @@ export class LoginComponent
   private formbuilder = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   loginform : FormGroup;
   errormessage = '';
@@ -56,7 +61,7 @@ export class LoginComponent
         },
         error: (err) => {
           console.error('Login error details:', err);
-          this.errormessage = 'Invalid Username or Password';
+          this.errormessage = this.translate.instant('login.invalidCredentials');
         }
       });
     }

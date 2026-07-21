@@ -1,24 +1,30 @@
-<div class = "login-wrapper">
-    <form [formGroup]= "loginform" (ngSubmit)="onSubmit()" class = login-form> 
-        <h2> Employeee Management System </h2>
-        <h2> Sign-in </h2>
+<div class="login-page">
+  <div class="login-topbar">
+    <app-language-switcher variant="light"></app-language-switcher>
+  </div>
 
-        <mat-form-field appearance="outline" class = "full-width">
-            <mat-label> Username </mat-label>
-            <input matInput formControlName = "username" type="text" placeholder="Enter Username">
+  <div class="login-wrapper">
+    <form [formGroup]="loginform" (ngSubmit)="onSubmit()" class="login-form">
+        <h2>{{ 'common.eyebrow' | translate }}</h2>
+        <h2>{{ 'login.title' | translate }}</h2>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'login.username' | translate }}</mat-label>
+            <input matInput formControlName="username" type="text" [placeholder]="'login.usernamePlaceholder' | translate">
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class = "full-width">
-            <mat-label> Password </mat-label>
-            <input matInput formControlName = "password" type="password" placeholder="Enter Password" class = "password">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'login.password' | translate }}</mat-label>
+            <input matInput formControlName="password" type="password" [placeholder]="'login.passwordPlaceholder' | translate" class="password">
         </mat-form-field>
 
         @if (errormessage) {
             <mat-error>{{ errormessage }}</mat-error>
         }
 
-        <button mat-raised-button color = "primary" type="submit" [disabled]="loginform.invalid" class = "full-width">
-            Submit
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginform.invalid" class="full-width">
+            {{ 'login.submit' | translate }}
         </button>
     </form>
+  </div>
 </div>

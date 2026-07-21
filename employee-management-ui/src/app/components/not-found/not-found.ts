@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-not-found',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './not-found.html',
   styleUrl: './not-found.css',
 })

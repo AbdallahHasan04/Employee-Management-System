@@ -2,32 +2,32 @@
 <div class="page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Employee Management System</p>
-      <h1>Department Page</h1>
+      <p class="eyebrow">{{ 'common.eyebrow' | translate }}</p>
+      <h1>{{ 'departments.title' | translate }}</h1>
     </div>
   </header>
 
   <section class="card form-card">
     @if (!editingDepartment) {
-      <h2 class="card-title">New Department</h2>
+      <h2 class="card-title">{{ 'departments.newTitle' | translate }}</h2>
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>Department Code</mat-label>
+          <mat-label>{{ 'departments.departmentCode' | translate }}</mat-label>
           <input matInput [(ngModel)]="newDepartment.departmentCode">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (English)</mat-label>
+          <mat-label>{{ 'departments.nameEn' | translate }}</mat-label>
           <input matInput [(ngModel)]="newDepartment.nameEn">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (Arabic)</mat-label>
+          <mat-label>{{ 'departments.nameAr' | translate }}</mat-label>
           <input matInput [(ngModel)]="newDepartment.nameAr">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'departments.description' | translate }}</mat-label>
           <input matInput [(ngModel)]="newDepartment.description">
         </mat-form-field>
       </div>
@@ -35,38 +35,38 @@
       <div class="form-actions">
         <button mat-raised-button color="primary" (click)="onAdd()">
           <mat-icon>add</mat-icon>
-          Add Department
+          {{ 'departments.addDepartment' | translate }}
         </button>
       </div>
 
     } @else {
-      <h2 class="card-title">Edit Department</h2>
+      <h2 class="card-title">{{ 'departments.editTitle' | translate }}</h2>
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>Department Code</mat-label>
+          <mat-label>{{ 'departments.departmentCode' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingDepartment.departmentCode">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (English)</mat-label>
+          <mat-label>{{ 'departments.nameEn' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingDepartment.nameEn">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Name (Arabic)</mat-label>
+          <mat-label>{{ 'departments.nameAr' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingDepartment.nameAr">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'departments.description' | translate }}</mat-label>
           <input matInput [(ngModel)]="editingDepartment.description">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
+          <mat-label>{{ 'departments.status' | translate }}</mat-label>
           <mat-select [(ngModel)]="editingDepartment.status">
-            <mat-option value="Active">Active</mat-option>
-            <mat-option value="Inactive">Inactive</mat-option>
+            <mat-option value="Active">{{ 'common.statusActive' | translate }}</mat-option>
+            <mat-option value="Inactive">{{ 'common.statusInactive' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -74,44 +74,44 @@
       <div class="form-actions">
         <button mat-raised-button color="accent" (click)="onUpdate()">
           <mat-icon>save</mat-icon>
-          Save Changes
+          {{ 'common.saveChanges' | translate }}
         </button>
-        <button mat-button (click)="editingDepartment = null">Cancel</button>
+        <button mat-button (click)="editingDepartment = null">{{ 'common.cancel' | translate }}</button>
       </div>
     }
   </section>
 
   <section class="card table-card">
     <div class="table-card-header">
-      <h2 class="card-title">All Departments</h2>
-      <span class="record-count">{{ departments.length }} {{ departments.length === 1 ? 'record' : 'records' }}</span>
+      <h2 class="card-title">{{ 'departments.allDepartments' | translate }}</h2>
+      <span class="record-count">{{ departments.length }} {{ (departments.length === 1 ? 'common.record' : 'common.records') | translate }}</span>
     </div>
 
     <div class="table-scroll">
       <table mat-table [dataSource]="departments" class="roster-table">
 
         <ng-container matColumnDef="departmentCode">
-          <th mat-header-cell *matHeaderCellDef> Code </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'departments.departmentCode' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.departmentCode}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameEn">
-          <th mat-header-cell *matHeaderCellDef> Name (EN) </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'departments.nameEn' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameAr">
-          <th mat-header-cell *matHeaderCellDef> Name (AR) </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'departments.nameAr' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
         </ng-container>
 
         <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'departments.description' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.description || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'departments.status' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button
               type="button"
@@ -119,13 +119,13 @@
               [ngClass]="statusClass(item.status)"
               (click)="toggleStatus(item)"
               title="Click to toggle status">
-              {{item.status}}
+              {{ statusLabelKey(item.status) | translate }}
             </button>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <th mat-header-cell *matHeaderCellDef> {{ 'common.actions' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button mat-icon-button color="primary" (click)="onEdit(item)" aria-label="Edit">
               <mat-icon>edit</mat-icon>
@@ -144,7 +144,7 @@
     @if (departments.length === 0) {
       <div class="empty-state">
         <mat-icon>domain_disabled</mat-icon>
-        <p>No departments yet. Add the first one above.</p>
+        <p>{{ 'departments.noDepartments' | translate }}</p>
       </div>
     }
   </section>

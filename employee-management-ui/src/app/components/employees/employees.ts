@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { EmployeeService, Employee, NewEmployee } from '../../services/employee';
 import { DepartmentService, Department } from '../../services/department';
 import { NavbarComponent } from '../navbar/navbar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule, NavbarComponent,
+    MatSelectModule, MatIconModule, NavbarComponent, TranslatePipe,
   ],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
@@ -26,6 +27,7 @@ export class EmployeesComponent implements OnInit
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   employees: Employee[] = [];
   departments: Department[] = [];
@@ -66,7 +68,7 @@ export class EmployeesComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
-        alert('Could not fetch employee list. Verify your backend is running');
+        alert(this.translate.instant('employees.fetchError'));
       }
     });
   }
@@ -88,12 +90,12 @@ export class EmployeesComponent implements OnInit
   {
     const requiredStrings = [this.newEmployee.employeeNo, this.newEmployee.nameEn, this.newEmployee.username, this.newEmployee.nationalNo];
     if (requiredStrings.some(f => !f?.trim())) {
-      alert('Employee No, Name (EN), Username and National No are required.');
+      alert(this.translate.instant('employees.requiredFields'));
       return;
     }
 
     if (!this.newEmployee.departmentId) {
-      alert('Please select a department.');
+      alert(this.translate.instant('employees.departmentRequired'));
       return;
     }
 
@@ -119,7 +121,7 @@ export class EmployeesComponent implements OnInit
     if (!this.editingEmployee) return;
 
     if (!this.editingEmployee.nameEn.trim() || !this.editingEmployee.nationalNo.trim() || !this.editingEmployee.departmentId) {
-      alert('Name (EN), National No and Department are required.');
+      alert(this.translate.instant('employees.updateRequiredFields'));
       return;
     }
 
@@ -133,7 +135,7 @@ export class EmployeesComponent implements OnInit
       error: (error) => {
         console.error('API Error: Update failed.', error);
         if (error.status === 404) {
-          alert(error.error?.message || 'Employee not found.');
+          alert(error.error?.message || this.translate.instant('employees.notFound'));
         }
       }
     });
@@ -150,7 +152,7 @@ export class EmployeesComponent implements OnInit
       error: (error) => {
         console.error('API Error: Delete failed.', error);
         if (error.status === 404) {
-          alert(error.error?.message || 'Employee not found.');
+          alert(error.error?.message || this.translate.instant('employees.notFound'));
         }
       }
     });
@@ -167,6 +169,16 @@ export class EmployeesComponent implements OnInit
     return status?.toLowerCase() === 'active' ? 'pill-active' : 'pill-inactive';
   }
 
+  statusLabelKey(status: string): string
+  {
+    return status?.toLowerCase() === 'active' ? 'common.statusActive' : 'common.statusInactive';
+  }
+
+  genderLabelKey(gender: string): string
+  {
+    return gender === 'Female' ? 'employees.genderFemale' : 'employees.genderMale';
+  }
+
   toggleStatus(item: Employee): void
   {
     const newStatus = item.status === 'Active' ? 'Inactive' : 'Active';
@@ -178,7 +190,7 @@ export class EmployeesComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Status toggle failed.', error);
-        alert('Could not update status.');
+        alert(this.translate.instant('employees.statusUpdateError'));
       }
     });
   }

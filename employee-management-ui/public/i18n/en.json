@@ -1,0 +1,87 @@
+{
+  "common": {
+    "eyebrow": "Employee Management System",
+    "actions": "Actions",
+    "cancel": "Cancel",
+    "saveChanges": "Save Changes",
+    "record": "record",
+    "records": "records",
+    "statusActive": "Active",
+    "statusInactive": "Inactive"
+  },
+  "nav": {
+    "brand": "Employee Management",
+    "employees": "Employees",
+    "departments": "Departments",
+    "logout": "Logout"
+  },
+  "lang": {
+    "switchTo": "العربية"
+  },
+  "login": {
+    "title": "Sign In",
+    "username": "Username",
+    "usernamePlaceholder": "Enter Username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter Password",
+    "submit": "Submit",
+    "invalidCredentials": "Invalid Username or Password"
+  },
+  "employees": {
+    "title": "Employee Page",
+    "newTitle": "New Employee",
+    "editTitle": "Edit Employee",
+    "employeeNo": "Employee No",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "department": "Department",
+    "username": "Username",
+    "nationalNo": "National No",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "birthdate": "Birthdate",
+    "mobileNumber": "Mobile Number",
+    "email": "Email",
+    "startWorkingDate": "Start Working Date",
+    "status": "Status",
+    "addEmployee": "Add Employee",
+    "allEmployees": "All Employees",
+    "noEmployees": "No employees yet. Add the first one above.",
+    "credentialsCreated": "Account created for {{username}}",
+    "credentialsPasswordLabel": "Password:",
+    "credentialsPasswordNote": "— copy it now, it won't be shown again.",
+    "fetchError": "Could not fetch employee list. Verify your backend is running",
+    "requiredFields": "Employee No, Name (EN), Username and National No are required.",
+    "departmentRequired": "Please select a department.",
+    "updateRequiredFields": "Name (EN), National No and Department are required.",
+    "notFound": "Employee not found.",
+    "statusUpdateError": "Could not update status."
+  },
+  "departments": {
+    "title": "Department Page",
+    "newTitle": "New Department",
+    "editTitle": "Edit Department",
+    "departmentCode": "Department Code",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "description": "Description",
+    "status": "Status",
+    "addDepartment": "Add Department",
+    "allDepartments": "All Departments",
+    "noDepartments": "No departments yet. Add the first one above.",
+    "fetchError": "Could not fetch department list. Verify your backend is running",
+    "requiredFields": "Department Code, Name (EN) and Name (AR) are required.",
+    "updateRequiredFields": "Name (EN) and Name (AR) are required.",
+    "notFound": "Department not found.",
+    "deleteError": "Could not delete department.",
+    "statusUpdateError": "Could not update status."
+  },
+  "notFound": {
+    "title404": "Page not found",
+    "message404": "The page you're looking for doesn't exist or may have been moved.",
+    "title401": "Unauthorized",
+    "message401": "Your session has expired and you are not authorized to view this page. Please log in again to continue.",
+    "backToLogin": "Go to Login"
+  }
+}

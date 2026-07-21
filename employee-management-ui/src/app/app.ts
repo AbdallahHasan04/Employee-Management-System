@@ -1,12 +1,19 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { BidiModule } from '@angular/cdk/bidi';
+import { LanguageService } from './services/language';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, BidiModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('employee-management-ui');
+  languageService = inject(LanguageService);
+
+  constructor()
+  {
+    this.languageService.init();
+  }
 }

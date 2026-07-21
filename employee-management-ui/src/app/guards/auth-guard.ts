@@ -11,7 +11,7 @@ export const authGuard: CanActivateFn = () =>
 
     if (!token)
     {
-        return router.parseUrl('/login');
+        return router.parseUrl('/not-found?reason=unauthorized');
     }
 
     if (authService.isTokenExpired())
