@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="Common/Common.csproj" Id="0ea1df11-a148-4d8f-93f8-61acfe07197f" />
+  <Project Path="Core/Core.csproj" Id="d6679cfc-ccec-49e8-a177-3c3d7e0d6586" />
+  <Project Path="Data/Data.csproj" Id="da41a046-2959-4b72-b15d-117a5262f681" />
   <Project Path="employee-management-api/employee-management-api.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" Id="b9332021-631c-4e66-90e7-120cd54002c7" />
 </Solution>
