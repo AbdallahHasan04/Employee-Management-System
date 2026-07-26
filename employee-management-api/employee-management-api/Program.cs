@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // REGISTER ARCHITECTURE LAYERS (DI)
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<LoginAttemptTracker>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();

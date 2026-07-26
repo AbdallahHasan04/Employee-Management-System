@@ -18,12 +18,18 @@
             <input matInput formControlName="password" type="password" [placeholder]="'login.passwordPlaceholder' | translate" class="password">
         </mat-form-field>
 
-        @if (errormessage) {
+        @if (isLockedOut) {
+            <mat-error>{{ 'login.lockoutMessage' | translate:{ time: lockoutTimeDisplay } }}</mat-error>
+        } @else if (errormessage) {
             <mat-error>{{ errormessage }}</mat-error>
         }
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="loginform.invalid" class="full-width">
-            {{ 'login.submit' | translate }}
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginform.invalid || isSubmitting || isLockedOut" class="full-width">
+            @if (isSubmitting) {
+                <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+                {{ 'login.submit' | translate }}
+            }
         </button>
     </form>
   </div>

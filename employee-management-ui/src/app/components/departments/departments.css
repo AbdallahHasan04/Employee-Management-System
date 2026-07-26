@@ -140,7 +140,12 @@
   background: #E5F3E9;
   color: #1C6B3F;
 }
-
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
 .pill-inactive {
   background: #F5E9E4;
   color: #A2531F;

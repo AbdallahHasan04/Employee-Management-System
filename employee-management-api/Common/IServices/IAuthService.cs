@@ -4,6 +4,6 @@ namespace Common.IServices
 {
     public interface IAuthService
     {
-        Task<AuthResultDto> LoginAsync(LoginDto loginDto);
+        Task<AuthResultDto> LoginAsync(LoginDto loginDto, string ipAddress);
     }
 }

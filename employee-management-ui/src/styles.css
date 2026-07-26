@@ -13,3 +13,15 @@ html, body
   font-weight: 500;
   text-align: center;
 }
+
+.snackbar-success {
+  --mdc-snackbar-container-color: #1E7E42;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: #B3261E;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}

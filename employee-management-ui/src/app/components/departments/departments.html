@@ -33,8 +33,12 @@
       </div>
 
       <div class="form-actions">
-        <button mat-raised-button color="primary" (click)="onAdd()">
-          <mat-icon>add</mat-icon>
+        <button mat-raised-button color="primary" (click)="onAdd()" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>add</mat-icon>
+          }
           {{ 'departments.addDepartment' | translate }}
         </button>
       </div>
@@ -72,11 +76,15 @@
       </div>
 
       <div class="form-actions">
-        <button mat-raised-button color="accent" (click)="onUpdate()">
-          <mat-icon>save</mat-icon>
+        <button mat-raised-button color="accent" (click)="onUpdate()" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
           {{ 'common.saveChanges' | translate }}
         </button>
-        <button mat-button (click)="editingDepartment = null">{{ 'common.cancel' | translate }}</button>
+        <button mat-button (click)="editingDepartment = null" [disabled]="isSubmitting">{{ 'common.cancel' | translate }}</button>
       </div>
     }
   </section>
@@ -118,8 +126,13 @@
               class="pill pill-button"
               [ngClass]="statusClass(item.status)"
               (click)="toggleStatus(item)"
+              [disabled]="togglingId === item.id"
               title="Click to toggle status">
-              {{ statusLabelKey(item.status) | translate }}
+              @if (togglingId === item.id) {
+                <mat-spinner diameter="14"></mat-spinner>
+              } @else {
+                {{ statusLabelKey(item.status) | translate }}
+              }
             </button>
           </td>
         </ng-container>
@@ -127,11 +140,15 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> {{ 'common.actions' | translate }} </th>
           <td mat-cell *matCellDef="let item">
-            <button mat-icon-button color="primary" (click)="onEdit(item)" aria-label="Edit">
+            <button mat-icon-button color="primary" (click)="onEdit(item)" [disabled]="deletingId === item.id" aria-label="Edit">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="onDelete(item.id)" aria-label="Delete">
-              <mat-icon>delete</mat-icon>
+            <button mat-icon-button color="warn" (click)="onDelete(item)" [disabled]="deletingId === item.id" aria-label="Delete">
+              @if (deletingId === item.id) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>delete</mat-icon>
+              }
             </button>
           </td>
         </ng-container>

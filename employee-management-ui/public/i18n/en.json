@@ -7,7 +7,10 @@
     "record": "record",
     "records": "records",
     "statusActive": "Active",
-    "statusInactive": "Inactive"
+    "statusInactive": "Inactive",
+    "delete": "Delete",
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete {{name}}? This action cannot be undone."
   },
   "nav": {
     "brand": "Employee Management",
@@ -25,7 +28,8 @@
     "password": "Password",
     "passwordPlaceholder": "Enter Password",
     "submit": "Submit",
-    "invalidCredentials": "Invalid Username or Password"
+    "invalidCredentials": "Invalid Username or Password",
+    "lockoutMessage": "Too many failed attempts. Please try again in {{time}}."
   },
   "employees": {
     "title": "Employee Page",
@@ -56,7 +60,10 @@
     "departmentRequired": "Please select a department.",
     "updateRequiredFields": "Name (EN), National No and Department are required.",
     "notFound": "Employee not found.",
-    "statusUpdateError": "Could not update status."
+    "statusUpdateError": "Could not update status.",
+    "updateSuccess": "Employee updated successfully!",
+    "deleteSuccess": "Employee deleted successfully!",
+    "statusUpdateSuccess": "Status updated successfully!"
   },
   "departments": {
     "title": "Department Page",
@@ -75,7 +82,11 @@
     "updateRequiredFields": "Name (EN) and Name (AR) are required.",
     "notFound": "Department not found.",
     "deleteError": "Could not delete department.",
-    "statusUpdateError": "Could not update status."
+    "statusUpdateError": "Could not update status.",
+    "addSuccess": "Department added successfully!",
+    "updateSuccess": "Department updated successfully!",
+    "deleteSuccess": "Department deleted successfully!",
+    "statusUpdateSuccess": "Status updated successfully!"
   },
   "notFound": {
     "title404": "Page not found",

@@ -1,9 +1,14 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 import { EmployeeService, Employee, NewEmployee } from '../../services/employee';
 import { DepartmentService, Department } from '../../services/department';
 import { NavbarComponent } from '../navbar/navbar';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
+import { SnackbarService } from '../../services/snackbar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule, NavbarComponent, TranslatePipe,
+    MatSelectModule, MatIconModule, MatProgressSpinnerModule, NavbarComponent, TranslatePipe,
   ],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
@@ -28,6 +33,8 @@ export class EmployeesComponent implements OnInit
   private departmentService = inject(DepartmentService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
+  private dialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
 
   employees: Employee[] = [];
   departments: Department[] = [];
@@ -42,6 +49,10 @@ export class EmployeesComponent implements OnInit
 
   lastCreatedUsername: string | null = null;
   lastGeneratedPassword: string | null = null;
+
+  isSubmitting = false;
+  deletingId: number | null = null;
+  togglingId: number | null = null;
 
   ngOnInit()
   {
@@ -68,7 +79,7 @@ export class EmployeesComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
-        alert(this.translate.instant('employees.fetchError'));
+        this.snackbar.showError(this.translate.instant('employees.fetchError'));
       }
     });
   }
@@ -90,16 +101,19 @@ export class EmployeesComponent implements OnInit
   {
     const requiredStrings = [this.newEmployee.employeeNo, this.newEmployee.nameEn, this.newEmployee.username, this.newEmployee.nationalNo];
     if (requiredStrings.some(f => !f?.trim())) {
-      alert(this.translate.instant('employees.requiredFields'));
+      this.snackbar.showError(this.translate.instant('employees.requiredFields'));
       return;
     }
 
     if (!this.newEmployee.departmentId) {
-      alert(this.translate.instant('employees.departmentRequired'));
+      this.snackbar.showError(this.translate.instant('employees.departmentRequired'));
       return;
     }
 
-    this.employeeService.addEmployee(this.newEmployee).subscribe({
+    this.isSubmitting = true;
+    this.employeeService.addEmployee(this.newEmployee).pipe(
+      finalize(() => this.isSubmitting = false)
+    ).subscribe({
       next: (response) => {
         this.lastCreatedUsername = response.employee.username;
         this.lastGeneratedPassword = response.employee.generatedPassword ?? null;
@@ -121,13 +135,17 @@ export class EmployeesComponent implements OnInit
     if (!this.editingEmployee) return;
 
     if (!this.editingEmployee.nameEn.trim() || !this.editingEmployee.nationalNo.trim() || !this.editingEmployee.departmentId) {
-      alert(this.translate.instant('employees.updateRequiredFields'));
+      this.snackbar.showError(this.translate.instant('employees.updateRequiredFields'));
       return;
     }
 
-    this.employeeService.updateEmployee(this.editingEmployee).subscribe({
+    this.isSubmitting = true;
+    this.employeeService.updateEmployee(this.editingEmployee).pipe(
+      finalize(() => this.isSubmitting = false)
+    ).subscribe({
       next: (response) => {
         console.log(response.message);
+        this.snackbar.showSuccess(this.translate.instant('employees.updateSuccess'));
         this.editingEmployee = null;
         this.loadData();
         this.cdr.detectChanges();
@@ -135,26 +153,41 @@ export class EmployeesComponent implements OnInit
       error: (error) => {
         console.error('API Error: Update failed.', error);
         if (error.status === 404) {
-          alert(error.error?.message || this.translate.instant('employees.notFound'));
+          this.snackbar.showError(error.error?.message || this.translate.instant('employees.notFound'));
         }
       }
     });
   }
 
-  onDelete(id: number)
+  onDelete(employee: Employee): void
   {
-    this.employeeService.deleteEmployee(id).subscribe({
-      next: (response) => {
-        console.log(response.message);
-        this.loadData();
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('API Error: Delete failed.', error);
-        if (error.status === 404) {
-          alert(error.error?.message || this.translate.instant('employees.notFound'));
-        }
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('common.confirmDeleteTitle'),
+        message: this.translate.instant('common.confirmDeleteMessage', { name: employee.nameEn })
       }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.deletingId = employee.id;
+      this.employeeService.deleteEmployee(employee.id).pipe(
+        finalize(() => this.deletingId = null)
+      ).subscribe({
+        next: (response) => {
+          console.log(response.message);
+          this.snackbar.showSuccess(this.translate.instant('employees.deleteSuccess'));
+          this.loadData();
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('API Error: Delete failed.', error);
+          if (error.status === 404) {
+            this.snackbar.showError(error.error?.message || this.translate.instant('employees.notFound'));
+          }
+        }
+      });
     });
   }
 
@@ -184,13 +217,17 @@ export class EmployeesComponent implements OnInit
     const newStatus = item.status === 'Active' ? 'Inactive' : 'Active';
     const updated: Employee = { ...item, status: newStatus };
 
-    this.employeeService.updateEmployee(updated).subscribe({
+    this.togglingId = item.id;
+    this.employeeService.updateEmployee(updated).pipe(
+      finalize(() => this.togglingId = null)
+    ).subscribe({
       next: () => {
+        this.snackbar.showSuccess(this.translate.instant('employees.statusUpdateSuccess'));
         this.loadData();
       },
       error: (error) => {
         console.error('API Error: Status toggle failed.', error);
-        alert(this.translate.instant('employees.statusUpdateError'));
+        this.snackbar.showError(this.translate.instant('employees.statusUpdateError'));
       }
     });
   }

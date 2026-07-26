@@ -1,8 +1,13 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 import { DepartmentService, Department, NewDepartment } from '../../services/department';
 import { NavbarComponent } from '../navbar/navbar';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
+import { SnackbarService } from '../../services/snackbar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { MatTableModule } from '@angular/material/table';
@@ -17,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule, NavbarComponent, TranslatePipe,
+    MatSelectModule, MatIconModule, MatProgressSpinnerModule, NavbarComponent, TranslatePipe,
   ],
   templateUrl: './departments.html',
   styleUrl: './departments.css',
@@ -27,12 +32,18 @@ export class DepartmentsComponent implements OnInit
   private departmentService = inject(DepartmentService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
+  private dialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
 
   departments: Department[] = [];
   displayedColumns: string[] = ['departmentCode', 'nameEn', 'nameAr', 'description', 'status', 'actions'];
 
   newDepartment: NewDepartment = this.emptyNewDepartment();
   editingDepartment: Department | null = null;
+
+  isSubmitting = false;
+  deletingId: number | null = null;
+  togglingId: number | null = null;
 
   ngOnInit()
   {
@@ -53,7 +64,7 @@ export class DepartmentsComponent implements OnInit
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
-        alert(this.translate.instant('departments.fetchError'));
+        this.snackbar.showError(this.translate.instant('departments.fetchError'));
       }
     });
   }
@@ -62,12 +73,16 @@ export class DepartmentsComponent implements OnInit
   {
     const required = [this.newDepartment.departmentCode, this.newDepartment.nameEn, this.newDepartment.nameAr];
     if (required.some(f => !f?.trim())) {
-      alert(this.translate.instant('departments.requiredFields'));
+      this.snackbar.showError(this.translate.instant('departments.requiredFields'));
       return;
     }
 
-    this.departmentService.addDepartment(this.newDepartment).subscribe({
+    this.isSubmitting = true;
+    this.departmentService.addDepartment(this.newDepartment).pipe(
+      finalize(() => this.isSubmitting = false)
+    ).subscribe({
       next: () => {
+        this.snackbar.showSuccess(this.translate.instant('departments.addSuccess'));
         this.newDepartment = this.emptyNewDepartment();
         this.loadData();
         this.cdr.detectChanges();
@@ -86,13 +101,17 @@ export class DepartmentsComponent implements OnInit
     if (!this.editingDepartment) return;
 
     if (!this.editingDepartment.nameEn.trim() || !this.editingDepartment.nameAr.trim()) {
-      alert(this.translate.instant('departments.updateRequiredFields'));
+      this.snackbar.showError(this.translate.instant('departments.updateRequiredFields'));
       return;
     }
 
-    this.departmentService.updateDepartment(this.editingDepartment).subscribe({
+    this.isSubmitting = true;
+    this.departmentService.updateDepartment(this.editingDepartment).pipe(
+      finalize(() => this.isSubmitting = false)
+    ).subscribe({
       next: (response) => {
         console.log(response.message);
+        this.snackbar.showSuccess(this.translate.instant('departments.updateSuccess'));
         this.editingDepartment = null;
         this.loadData();
         this.cdr.detectChanges();
@@ -100,24 +119,39 @@ export class DepartmentsComponent implements OnInit
       error: (error) => {
         console.error('API Error: Update failed.', error);
         if (error.status === 404) {
-          alert(error.error?.message || this.translate.instant('departments.notFound'));
+          this.snackbar.showError(error.error?.message || this.translate.instant('departments.notFound'));
         }
       }
     });
   }
 
-  onDelete(id: number)
+  onDelete(department: Department): void
   {
-    this.departmentService.deleteDepartment(id).subscribe({
-      next: (response) => {
-        console.log(response.message);
-        this.loadData();
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('API Error: Delete failed.', error);
-        alert(error.error?.message || this.translate.instant('departments.deleteError'));
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('common.confirmDeleteTitle'),
+        message: this.translate.instant('common.confirmDeleteMessage', { name: department.nameEn })
       }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.deletingId = department.id;
+      this.departmentService.deleteDepartment(department.id).pipe(
+        finalize(() => this.deletingId = null)
+      ).subscribe({
+        next: (response) => {
+          console.log(response.message);
+          this.snackbar.showSuccess(this.translate.instant('departments.deleteSuccess'));
+          this.loadData();
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('API Error: Delete failed.', error);
+          this.snackbar.showError(error.error?.message || this.translate.instant('departments.deleteError'));
+        }
+      });
     });
   }
 
@@ -136,13 +170,17 @@ export class DepartmentsComponent implements OnInit
     const newStatus = item.status === 'Active' ? 'Inactive' : 'Active';
     const updated: Department = { ...item, status: newStatus };
 
-    this.departmentService.updateDepartment(updated).subscribe({
+    this.togglingId = item.id;
+    this.departmentService.updateDepartment(updated).pipe(
+      finalize(() => this.togglingId = null)
+    ).subscribe({
       next: () => {
+        this.snackbar.showSuccess(this.translate.instant('departments.statusUpdateSuccess'));
         this.loadData();
       },
       error: (error) => {
         console.error('API Error: Status toggle failed.', error);
-        alert(this.translate.instant('departments.statusUpdateError'));
+        this.snackbar.showError(this.translate.instant('departments.statusUpdateError'));
       }
     });
   }

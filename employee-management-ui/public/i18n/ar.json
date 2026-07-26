@@ -25,7 +25,8 @@
     "password": "كلمة المرور",
     "passwordPlaceholder": "أدخل كلمة المرور",
     "submit": "دخول",
-    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة"
+    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+    "lockoutMessage": "عدد كبير من المحاولات الفاشلة. يرجى المحاولة مرة أخرى خلال {{time}}."
   },
   "employees": {
     "title": "صفحة الموظفين",
@@ -56,7 +57,10 @@
     "departmentRequired": "يرجى اختيار القسم.",
     "updateRequiredFields": "الاسم (إنجليزي) والرقم الوطني والقسم حقول مطلوبة.",
     "notFound": "الموظف غير موجود.",
-    "statusUpdateError": "تعذر تحديث الحالة."
+    "statusUpdateError": "تعذر تحديث الحالة.",
+    "updateSuccess": "تم تحديث الموظف بنجاح!",
+    "deleteSuccess": "تم حذف الموظف بنجاح!",
+    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!"
   },
   "departments": {
     "title": "صفحة الأقسام",
@@ -75,7 +79,14 @@
     "updateRequiredFields": "الاسم (إنجليزي) والاسم (عربي) حقول مطلوبة.",
     "notFound": "القسم غير موجود.",
     "deleteError": "تعذر حذف القسم.",
-    "statusUpdateError": "تعذر تحديث الحالة."
+    "statusUpdateError": "تعذر تحديث الحالة.",
+    "delete": "حذف",
+    "confirmDeleteTitle": "تأكيد الحذف",
+    "confirmDeleteMessage": "هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "addSuccess": "تمت إضافة القسم بنجاح!",
+    "updateSuccess": "تم تحديث القسم بنجاح!",
+    "deleteSuccess": "تم حذف القسم بنجاح!",
+    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!"
   },
   "notFound": {
     "title404": "الصفحة غير موجودة",

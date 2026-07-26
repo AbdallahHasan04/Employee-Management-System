@@ -1,0 +1,13 @@
+h2[mat-dialog-title] {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  color: #20232B;
+}
+
+mat-dialog-content p {
+  font-family: 'Inter', Roboto, sans-serif;
+  color: #6B7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}

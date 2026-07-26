@@ -18,7 +18,17 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var result = await _authService.LoginAsync(loginDto);
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var result = await _authService.LoginAsync(loginDto, ipAddress);
+
+            if (result.IsLockedOut)
+            {
+                return StatusCode(429, new
+                {
+                    message = "Too many failed login attempts. Please try again later.",
+                    lockoutRemainingSeconds = result.LockoutRemainingSeconds
+                });
+            }
 
             if (!result.Success)
             {

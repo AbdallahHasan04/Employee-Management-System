@@ -14,21 +14,36 @@ namespace Infrastructure.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
+        private readonly LoginAttemptTracker _attemptTracker;
 
-        public AuthService(IUserRepository userRepository, IConfiguration config)
+        public AuthService(IUserRepository userRepository, IConfiguration config, LoginAttemptTracker attemptTracker)
         {
             _userRepository = userRepository;
             _config = config;
+            _attemptTracker = attemptTracker;
         }
 
-        public async Task<AuthResultDto> LoginAsync(LoginDto loginDto)
+        public async Task<AuthResultDto> LoginAsync(LoginDto loginDto, string ipAddress)
         {
+            if (_attemptTracker.IsLockedOut(ipAddress, out var remaining))
+            {
+                return new AuthResultDto
+                {
+                    Success = false,
+                    IsLockedOut = true,
+                    LockoutRemainingSeconds = (int)Math.Ceiling(remaining.TotalSeconds)
+                };
+            }
+
             var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
 
             if (user == null || user.Status != "Active" || !PasswordHasher.Verify(loginDto.Password, user.Password))
             {
+                _attemptTracker.RecordFailure(ipAddress);
                 return new AuthResultDto { Success = false };
             }
+
+            _attemptTracker.RecordSuccess(ipAddress);
 
             var jwtSettings = _config.GetSection("Jwt");
             var expirationMinutes = int.TryParse(jwtSettings["ExpirationMinutes"], out var minutes) ? minutes : 30;
