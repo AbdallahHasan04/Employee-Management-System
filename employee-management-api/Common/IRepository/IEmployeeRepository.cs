@@ -10,5 +10,7 @@ namespace Common.IRepository
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(int id);
         Task<bool> ExistsByDepartmentIdAsync(int departmentId);
+        Task<int> GetCountByDepartmentIdAsync(int departmentId);
+        Task<Dictionary<int, int>> GetEmployeeCountsByDepartmentAsync();
     }
 }

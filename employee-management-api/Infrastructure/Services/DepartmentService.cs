@@ -19,13 +19,20 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
         {
             var departments = await _departmentRepository.GetAllAsync();
-            return departments.Select(ToDto);
+            var counts = await _employeeRepository.GetEmployeeCountsByDepartmentAsync();
+            return departments.Select(d => ToDto(d, counts.GetValueOrDefault(d.Id, 0)));
         }
 
         public async Task<DepartmentDto?> GetDepartmentByIdAsync(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
-            return department == null ? null : ToDto(department);
+            if (department == null)
+            {
+                return null;
+            }
+
+            var count = await _employeeRepository.GetCountByDepartmentIdAsync(id);
+            return ToDto(department, count);
         }
 
         public async Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto dto, string? createdBy)
@@ -42,7 +49,7 @@ namespace Infrastructure.Services
             };
 
             await _departmentRepository.AddAsync(department);
-            return ToDto(department);
+            return ToDto(department, 0); // brand new department, always starts with zero employees
         }
 
         public async Task<bool> UpdateDepartmentAsync(DepartmentDto dto, string? modifiedBy)
@@ -83,7 +90,7 @@ namespace Infrastructure.Services
             return DepartmentDeleteResult.Success;
         }
 
-        private static DepartmentDto ToDto(Department department)
+        private static DepartmentDto ToDto(Department department, int employeeCount)
         {
             return new DepartmentDto
             {
@@ -93,6 +100,7 @@ namespace Infrastructure.Services
                 NameAr = department.NameAr,
                 Description = department.Description,
                 Status = department.Status,
+                EmployeeCount = employeeCount,
                 CreatedBy = department.CreatedBy,
                 CreationDate = department.CreationDate,
                 ModifiedBy = department.ModifiedBy,

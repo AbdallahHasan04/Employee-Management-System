@@ -38,10 +38,11 @@ export class EmployeesComponent implements OnInit
 
   employees: Employee[] = [];
   departments: Department[] = [];
-  displayedColumns: string[] = [
-    'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
-    'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
-    'status', 'actions'
+  displayedColumns: string[] = 
+  [
+  'expand', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
+  'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
+  'status', 'actions'
   ];
 
   newEmployee: NewEmployee = this.emptyNewEmployee();
@@ -53,6 +54,12 @@ export class EmployeesComponent implements OnInit
   isSubmitting = false;
   deletingId: number | null = null;
   togglingId: number | null = null;
+  expandedId: number | null = null;
+
+  toggleExpand(item: Employee): void
+  {
+  this.expandedId = this.expandedId === item.id ? null : item.id;
+  }
 
   ngOnInit()
   {

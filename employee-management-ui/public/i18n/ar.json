@@ -7,7 +7,14 @@
     "record": "سجل",
     "records": "سجلات",
     "statusActive": "متصل",
-    "statusInactive": "غير متصل"
+    "statusInactive": "غير متصل",
+    "delete": "حذف",
+    "confirmDeleteTitle": "تأكيد الحذف",
+    "confirmDeleteMessage": "هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "createdBy": "أنشئ بواسطة",
+    "creationDate": "تاريخ الإنشاء",
+    "modifiedBy": "عدّل بواسطة",
+    "modificationDate": "تاريخ التعديل"
   },
   "nav": {
     "brand": "إدارة الموظفين",
@@ -86,7 +93,8 @@
     "addSuccess": "تمت إضافة القسم بنجاح!",
     "updateSuccess": "تم تحديث القسم بنجاح!",
     "deleteSuccess": "تم حذف القسم بنجاح!",
-    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!"
+    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!",
+    "employeeCount": "عدد الموظفين"
   },
   "notFound": {
     "title404": "الصفحة غير موجودة",

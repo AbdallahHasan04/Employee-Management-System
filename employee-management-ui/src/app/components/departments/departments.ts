@@ -36,14 +36,19 @@ export class DepartmentsComponent implements OnInit
   private snackbar = inject(SnackbarService);
 
   departments: Department[] = [];
-  displayedColumns: string[] = ['departmentCode', 'nameEn', 'nameAr', 'description', 'status', 'actions'];
-
+  displayedColumns: string[] = ['expand', 'departmentCode', 'nameEn', 'nameAr', 'description', 'employeeCount', 'status', 'actions'];
   newDepartment: NewDepartment = this.emptyNewDepartment();
   editingDepartment: Department | null = null;
 
   isSubmitting = false;
   deletingId: number | null = null;
   togglingId: number | null = null;
+  expandedId: number | null = null;
+
+  toggleExpand(item: Department): void
+  {
+  this.expandedId = this.expandedId === item.id ? null : item.id;
+  }
 
   ngOnInit()
   {

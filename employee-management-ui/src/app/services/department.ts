@@ -10,6 +10,7 @@ export interface Department
     nameAr: string;
     description: string | null;
     status: string;
+    employeeCount: number;
     createdBy: string | null;
     creationDate: string;
     modifiedBy: string | null;

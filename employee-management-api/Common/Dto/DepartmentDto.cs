@@ -8,6 +8,7 @@
         public string NameAr { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string Status { get; set; } = "Active";
+        public int EmployeeCount { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string? ModifiedBy { get; set; }

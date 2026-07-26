@@ -50,5 +50,18 @@ namespace Data.Repository
         {
             return await _context.Employees.AnyAsync(e => e.DepartmentId == departmentId);
         }
+
+        public async Task<int> GetCountByDepartmentIdAsync(int departmentId)
+        {
+            return await _context.Employees.CountAsync(e => e.DepartmentId == departmentId);
+        }
+
+        public async Task<Dictionary<int, int>> GetEmployeeCountsByDepartmentAsync()
+        {
+            return await _context.Employees
+                .GroupBy(e => e.DepartmentId)
+                .Select(g => new { DepartmentId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.DepartmentId, x => x.Count);
+        }
     }
 }

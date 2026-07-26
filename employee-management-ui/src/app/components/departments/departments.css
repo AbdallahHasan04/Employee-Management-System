@@ -214,3 +214,65 @@ button:focus-visible,
 .pill-button:active {
   filter: brightness(0.9);
 }
+
+.element-row {
+  cursor: pointer;
+}
+
+.detail-row td {
+  border-bottom: none;
+  padding: 0;
+}
+
+.detail-cell {
+  padding: 0 !important;
+}
+
+.detail-row-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+
+.detail-row-content.expanded {
+  max-height: 200px;
+  padding: 16px 24px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 24px;
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #20232B;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #EEF0FA;
+  color: #3F51B5;
+  font-size: 12px;
+  font-weight: 600;
+}

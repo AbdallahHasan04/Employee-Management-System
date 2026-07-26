@@ -4,13 +4,17 @@
     "actions": "Actions",
     "cancel": "Cancel",
     "saveChanges": "Save Changes",
-    "record": "record",
-    "records": "records",
+    "record": "Record",
+    "records": "Records",
     "statusActive": "Active",
     "statusInactive": "Inactive",
     "delete": "Delete",
     "confirmDeleteTitle": "Confirm Deletion",
-    "confirmDeleteMessage": "Are you sure you want to delete {{name}}? This action cannot be undone."
+    "confirmDeleteMessage": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "createdBy": "Created By",
+    "creationDate": "Creation Date",
+    "modifiedBy": "Modified By",
+    "modificationDate": "Modification Date"
   },
   "nav": {
     "brand": "Employee Management",
@@ -86,7 +90,8 @@
     "addSuccess": "Department added successfully!",
     "updateSuccess": "Department updated successfully!",
     "deleteSuccess": "Department deleted successfully!",
-    "statusUpdateSuccess": "Status updated successfully!"
+    "statusUpdateSuccess": "Status updated successfully!",
+    "employeeCount": "Employees"
   },
   "notFound": {
     "title404": "Page not found",
