@@ -17,9 +17,18 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmployeeDto>>> Get()
+        public async Task<ActionResult<PagedResultDto<EmployeeDto>>> Get(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false,
+            [FromQuery] string? search = null)
         {
-            return Ok(await _service.GetAllEmployeesAsync());
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1 || pageSize > 100) pageSize = 10;
+
+            var result = await _service.GetAllEmployeesAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

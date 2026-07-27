@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Employee
@@ -25,7 +25,6 @@ export interface Employee
     generatedPassword?: string;
 }
 
-// Used for the add form
 export type NewEmployee = Pick<Employee,
   'employeeNo' | 'nameEn' | 'nameAr' | 'username' | 'birthdate' |
   'nationalNo' | 'gender' | 'mobileNumber' | 'email' | 'startWorkingDate'
@@ -37,14 +36,44 @@ export interface CreateEmployeeResponse
     employee: Employee;
 }
 
+export interface PagedResult<T>
+{
+    items: T[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+}
+
+export interface EmployeeQueryParams
+{
+    pageNumber: number;
+    pageSize: number;
+    sortBy?: string;
+    sortDescending?: boolean;
+    search?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
   private http = inject(HttpClient);
   private apiUrl = 'https://localhost:7038/api/employees';
 
-    getEmployees(): Observable<Employee[]>
+    getEmployees(params: EmployeeQueryParams): Observable<PagedResult<Employee>>
     {
-        return this.http.get<Employee[]>(this.apiUrl);
+        let httpParams = new HttpParams()
+            .set('pageNumber', params.pageNumber)
+            .set('pageSize', params.pageSize);
+
+        if (params.sortBy) {
+            httpParams = httpParams
+                .set('sortBy', params.sortBy)
+                .set('sortDescending', params.sortDescending ?? false);
+        }
+        if (params.search) {
+            httpParams = httpParams.set('search', params.search);
+        }
+
+        return this.http.get<PagedResult<Employee>>(this.apiUrl, { params: httpParams });
     }
 
     addEmployee(employee: NewEmployee): Observable<CreateEmployeeResponse>

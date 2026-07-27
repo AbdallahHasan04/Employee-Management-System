@@ -11,7 +11,7 @@ namespace Common.IServices
 
     public interface IDepartmentService
     {
-        Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync();
+        Task<PagedResultDto<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search);
         Task<DepartmentDto?> GetDepartmentByIdAsync(int id);
         Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto departmentDto, string? createdBy);
         Task<bool> UpdateDepartmentAsync(DepartmentDto departmentDto, string? modifiedBy);

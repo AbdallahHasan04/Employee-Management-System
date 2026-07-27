@@ -19,10 +19,16 @@ namespace Infrastructure.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
+        public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
-            var employees = await _employeeRepository.GetAllAsync();
-            return employees.Select(ToDto);
+            var (items, totalCount) = await _employeeRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+            return new PagedResultDto<EmployeeDto>
+            {
+                Items = items.Select(ToDto).ToList(),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<EmployeeDto?> GetEmployeeByIdAsync(int id)
@@ -64,7 +70,7 @@ namespace Infrastructure.Services
                     CreatedBy = createdBy,
                     CreationDate = DateTime.UtcNow
                 };
-                await _employeeRepository.AddAsync(employee); // populates employee.Id
+                await _employeeRepository.AddAsync(employee);
 
                 var generatedPassword = PasswordHasher.GenerateFromEmployeeId(employee.Id);
                 user.Password = PasswordHasher.Hash(generatedPassword);

@@ -16,11 +16,20 @@ namespace Infrastructure.Services
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
+        public async Task<PagedResultDto<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
-            var departments = await _departmentRepository.GetAllAsync();
-            var counts = await _employeeRepository.GetEmployeeCountsByDepartmentAsync();
-            return departments.Select(d => ToDto(d, counts.GetValueOrDefault(d.Id, 0)));
+            var (items, totalCount) = await _departmentRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+
+            var departmentIds = items.Select(d => d.Id).ToList();
+            var counts = await _employeeRepository.GetEmployeeCountsForDepartmentIdsAsync(departmentIds);
+
+            return new PagedResultDto<DepartmentDto>
+            {
+                Items = items.Select(d => ToDto(d, counts.GetValueOrDefault(d.Id, 0))).ToList(),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<DepartmentDto?> GetDepartmentByIdAsync(int id)
@@ -31,8 +40,8 @@ namespace Infrastructure.Services
                 return null;
             }
 
-            var count = await _employeeRepository.GetCountByDepartmentIdAsync(id);
-            return ToDto(department, count);
+            var count = await _employeeRepository.GetEmployeeCountsForDepartmentIdsAsync(new[] { id });
+            return ToDto(department, count.GetValueOrDefault(id, 0));
         }
 
         public async Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto dto, string? createdBy)
@@ -49,7 +58,7 @@ namespace Infrastructure.Services
             };
 
             await _departmentRepository.AddAsync(department);
-            return ToDto(department, 0); // brand new department, always starts with zero employees
+            return ToDto(department, 0);
         }
 
         public async Task<bool> UpdateDepartmentAsync(DepartmentDto dto, string? modifiedBy)

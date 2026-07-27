@@ -92,11 +92,29 @@
   <section class="card table-card">
     <div class="table-card-header">
       <h2 class="card-title">{{ 'departments.allDepartments' | translate }}</h2>
-      <span class="record-count">{{ departments.length }} {{ (departments.length === 1 ? 'common.record' : 'common.records') | translate }}</span>
+      <span class="record-count">{{ totalCount }} {{ (totalCount === 1 ? 'common.record' : 'common.records') | translate }}</span>
     </div>
 
+    <div class="search-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
+            @if (searchTerm) {
+              <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
+                <mat-icon>close</mat-icon>
+              </button>
+    }
+      </mat-form-field>
+        <span class="search-hint">{{ 'departments.searchHint' | translate }}</span>
+    </div>
+
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
     <div class="table-scroll">
-      <table mat-table [dataSource]="departments" class="roster-table" multiTemplateDataRows>
+      <table mat-table [dataSource]="departments" class="roster-table" multiTemplateDataRows matSort
+             [matSortActive]="sortActive" [matSortDirection]="sortDirection" (matSortChange)="onSortChange($event)">
 
         <ng-container matColumnDef="expand">
           <th mat-header-cell *matHeaderCellDef></th>
@@ -112,34 +130,34 @@
         </ng-container>
 
         <ng-container matColumnDef="departmentCode">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.departmentCode' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.departmentCode' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.departmentCode}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameEn">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.nameEn' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.nameEn' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameAr">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.nameAr' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.nameAr' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
         </ng-container>
 
         <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.description' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.description' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.description || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="employeeCount">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.employeeCount' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.employeeCount' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <span class="count-badge">{{ item.employeeCount }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef> {{ 'departments.status' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'departments.status' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button
               type="button"
@@ -204,11 +222,27 @@
       </table>
     </div>
 
-    @if (departments.length === 0) {
+    @if (!isLoading && departments.length === 0 && !searchTerm) {
       <div class="empty-state">
         <mat-icon>domain_disabled</mat-icon>
         <p>{{ 'departments.noDepartments' | translate }}</p>
       </div>
     }
+
+    @if (!isLoading && departments.length === 0 && searchTerm) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'departments.noResults' | translate }}</p>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
   </section>
 </div>

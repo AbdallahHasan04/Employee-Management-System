@@ -219,9 +219,14 @@ button:focus-visible,
   cursor: pointer;
 }
 
+.detail-row {
+  height: 0 !important;
+}
+
 .detail-row td {
   border-bottom: none;
-  padding: 0;
+  padding: 0 !important;
+  height: 0 !important;
 }
 
 .detail-cell {
@@ -275,4 +280,17 @@ button:focus-visible,
   color: #3F51B5;
   font-size: 12px;
   font-weight: 600;
+}
+
+.search-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.search-hint {
+  font-size: 12px;
+  color: #9CA3AF;
+  padding-inline-start: 4px;
 }

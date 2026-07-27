@@ -1,9 +1,11 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize } from 'rxjs';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil, finalize } from 'rxjs';
 import { DepartmentService, Department, NewDepartment } from '../../services/department';
 import { NavbarComponent } from '../navbar/navbar';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
@@ -16,18 +18,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-departments',
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule, MatProgressSpinnerModule, NavbarComponent, TranslatePipe,
+    MatSelectModule, MatIconModule, MatProgressSpinnerModule,
+    MatPaginatorModule, MatSortModule, MatProgressBarModule,
+    NavbarComponent, TranslatePipe,
   ],
   templateUrl: './departments.html',
   styleUrl: './departments.css',
 })
-export class DepartmentsComponent implements OnInit
+export class DepartmentsComponent implements OnInit, OnDestroy
 {
   private departmentService = inject(DepartmentService);
   private cdr = inject(ChangeDetectorRef);
@@ -37,6 +42,7 @@ export class DepartmentsComponent implements OnInit
 
   departments: Department[] = [];
   displayedColumns: string[] = ['expand', 'departmentCode', 'nameEn', 'nameAr', 'description', 'employeeCount', 'status', 'actions'];
+
   newDepartment: NewDepartment = this.emptyNewDepartment();
   editingDepartment: Department | null = null;
 
@@ -44,15 +50,38 @@ export class DepartmentsComponent implements OnInit
   deletingId: number | null = null;
   togglingId: number | null = null;
   expandedId: number | null = null;
+  isLoading = false;
 
-  toggleExpand(item: Department): void
-  {
-  this.expandedId = this.expandedId === item.id ? null : item.id;
-  }
+  searchTerm = '';
+  private search$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  sortActive = 'departmentCode';
+  sortDirection: 'asc' | 'desc' | '' = 'asc';
+
+  pageIndex = 0;
+  pageSize = 10;
+  totalCount = 0;
+  pageSizeOptions = [5, 10, 25, 50];
 
   ngOnInit()
   {
+    this.search$.pipe(
+      debounceTime(0),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.pageIndex = 0;
+      this.loadData();
+    });
+
     this.loadData();
+  }
+
+  ngOnDestroy(): void
+  {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private emptyNewDepartment(): NewDepartment
@@ -60,16 +89,47 @@ export class DepartmentsComponent implements OnInit
     return { departmentCode: '', nameEn: '', nameAr: '', description: null };
   }
 
+  onSearchChange(term: string): void
+  {
+    this.search$.next(term);
+  }
+
+  onSortChange(sort: Sort): void
+  {
+    this.sortActive = sort.active;
+    this.sortDirection = sort.direction;
+    this.pageIndex = 0;
+    this.loadData();
+  }
+
+  onPageChange(event: PageEvent): void
+  {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadData();
+  }
+
   loadData()
   {
-    this.departmentService.getDepartments().subscribe({
-      next: (data) => {
-        this.departments = [...data];
+    this.isLoading = true;
+    this.departmentService.getDepartments({
+      pageNumber: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      sortBy: this.sortDirection ? this.sortActive : undefined,
+      sortDescending: this.sortDirection === 'desc',
+      search: this.searchTerm || undefined
+    }).subscribe({
+      next: (result) => {
+        this.departments = result.items;
+        this.totalCount = result.totalCount;
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
         this.snackbar.showError(this.translate.instant('departments.fetchError'));
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -188,5 +248,10 @@ export class DepartmentsComponent implements OnInit
         this.snackbar.showError(this.translate.instant('departments.statusUpdateError'));
       }
     });
+  }
+
+  toggleExpand(item: Department): void
+  {
+    this.expandedId = this.expandedId === item.id ? null : item.id;
   }
 }

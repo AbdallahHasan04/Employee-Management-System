@@ -171,11 +171,29 @@
   <section class="card table-card">
     <div class="table-card-header">
       <h2 class="card-title">{{ 'employees.allEmployees' | translate }}</h2>
-      <span class="record-count">{{ employees.length }} {{ (employees.length === 1 ? 'common.record' : 'common.records') | translate }}</span>
+      <span class="record-count">{{ totalCount }} {{ (totalCount === 1 ? 'common.record' : 'common.records') | translate }}</span>
     </div>
 
+    <div class="search-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
+            @if (searchTerm) {
+             <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
+              <mat-icon>close</mat-icon>
+            </button>
+    }
+      </mat-form-field>
+        <span class="search-hint">{{ 'employees.searchHint' | translate }}</span>
+    </div>
+
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
     <div class="table-scroll">
-      <table mat-table [dataSource]="employees" class="roster-table" multiTemplateDataRows>
+      <table mat-table [dataSource]="employees" class="roster-table" multiTemplateDataRows matSort
+             [matSortActive]="sortActive" [matSortDirection]="sortDirection" (matSortChange)="onSortChange($event)">
 
         <ng-container matColumnDef="expand">
           <th mat-header-cell *matHeaderCellDef></th>
@@ -191,62 +209,62 @@
         </ng-container>
 
         <ng-container matColumnDef="employeeNo">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.employeeNo' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.employeeNo' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.employeeNo}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameEn">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nameEn' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.nameEn' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nameAr">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nameAr' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.nameAr' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
         </ng-container>
 
         <ng-container matColumnDef="departmentName">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.department' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.department' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.departmentName || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.username' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.username' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.username}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nationalNo">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.nationalNo' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.nationalNo' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.nationalNo}} </td>
         </ng-container>
 
         <ng-container matColumnDef="gender">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.gender' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.gender' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.gender ? (genderLabelKey(item.gender) | translate) : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="birthdate">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.birthdate' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.birthdate' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.birthdate ? (item.birthdate | date:'mediumDate') : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="mobileNumber">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.mobileNumber' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.mobileNumber' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.mobileNumber || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.email' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.email' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.email || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="startWorkingDate">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.startWorkingDate' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.startWorkingDate' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.startWorkingDate ? (item.startWorkingDate | date:'mediumDate') : '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef> {{ 'employees.status' | translate }} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.status' | translate }} </th>
           <td mat-cell *matCellDef="let item">
             <button
               type="button"
@@ -311,11 +329,27 @@
       </table>
     </div>
 
-    @if (employees.length === 0) {
+    @if (!isLoading && employees.length === 0 && !searchTerm) {
       <div class="empty-state">
         <mat-icon>group_off</mat-icon>
         <p>{{ 'employees.noEmployees' | translate }}</p>
       </div>
     }
+
+    @if (!isLoading && employees.length === 0 && searchTerm) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'employees.noResults' | translate }}</p>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
   </section>
 </div>

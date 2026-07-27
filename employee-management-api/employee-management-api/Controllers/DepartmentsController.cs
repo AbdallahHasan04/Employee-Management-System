@@ -17,9 +17,18 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DepartmentDto>>> Get()
+        public async Task<ActionResult<PagedResultDto<DepartmentDto>>> Get(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false,
+            [FromQuery] string? search = null)
         {
-            return Ok(await _service.GetAllDepartmentsAsync());
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1 || pageSize > 1000) pageSize = 10;
+
+            var result = await _service.GetAllDepartmentsAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

@@ -14,7 +14,13 @@
     "createdBy": "Created By",
     "creationDate": "Creation Date",
     "modifiedBy": "Modified By",
-    "modificationDate": "Modification Date"
+    "modificationDate": "Modification Date",
+    "searchPlaceholder": "Search",
+    "itemsPerPage": "Items per page:",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
+    "firstPage": "First page",
+    "lastPage": "Last page"
   },
   "nav": {
     "brand": "Employee Management",
@@ -67,7 +73,9 @@
     "statusUpdateError": "Could not update status.",
     "updateSuccess": "Employee updated successfully!",
     "deleteSuccess": "Employee deleted successfully!",
-    "statusUpdateSuccess": "Status updated successfully!"
+    "statusUpdateSuccess": "Status updated successfully!",
+    "noResults": "No employees match your search.",
+    "searchHint": "Search by: Employee No, Name, Username, National No, or Email"
   },
   "departments": {
     "title": "Department Page",
@@ -91,7 +99,9 @@
     "updateSuccess": "Department updated successfully!",
     "deleteSuccess": "Department deleted successfully!",
     "statusUpdateSuccess": "Status updated successfully!",
-    "employeeCount": "Employees"
+    "employeeCount": "Employees",
+    "noResults": "No departments match your search.",
+    "searchHint": "Search by: Code, Name, or Description"
   },
   "notFound": {
     "title404": "Page not found",

@@ -14,7 +14,13 @@
     "createdBy": "أنشئ بواسطة",
     "creationDate": "تاريخ الإنشاء",
     "modifiedBy": "عدّل بواسطة",
-    "modificationDate": "تاريخ التعديل"
+    "modificationDate": "تاريخ التعديل",
+    "searchPlaceholder": "بحث",
+    "itemsPerPage": "عناصر لكل صفحة:",
+    "nextPage": "الصفحة التالية",
+    "previousPage": "الصفحة السابقة",
+    "firstPage": "الصفحة الأولى",
+    "lastPage": "الصفحة الأخيرة"
   },
   "nav": {
     "brand": "إدارة الموظفين",
@@ -67,7 +73,9 @@
     "statusUpdateError": "تعذر تحديث الحالة.",
     "updateSuccess": "تم تحديث الموظف بنجاح!",
     "deleteSuccess": "تم حذف الموظف بنجاح!",
-    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!"
+    "statusUpdateSuccess": "تم تحديث الحالة بنجاح!",
+    "noResults": "لا يوجد موظفون مطابقون لبحثك.",
+    "searchHint": "البحث حسب: الرقم الوظيفي، الاسم، اسم المستخدم، الرقم الوطني، أو البريد الإلكتروني"
   },
   "departments": {
     "title": "صفحة الأقسام",
@@ -94,7 +102,9 @@
     "updateSuccess": "تم تحديث القسم بنجاح!",
     "deleteSuccess": "تم حذف القسم بنجاح!",
     "statusUpdateSuccess": "تم تحديث الحالة بنجاح!",
-    "employeeCount": "عدد الموظفين"
+    "employeeCount": "عدد الموظفين",
+    "noResults": "لا توجد أقسام مطابقة لبحثك.",
+    "searchHint": "البحث حسب: الرمز، الاسم، أو الوصف"
   },
   "notFound": {
     "title404": "الصفحة غير موجودة",

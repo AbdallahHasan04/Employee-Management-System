@@ -1,9 +1,11 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize } from 'rxjs';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil, finalize } from 'rxjs';
 import { EmployeeService, Employee, NewEmployee } from '../../services/employee';
 import { DepartmentService, Department } from '../../services/department';
 import { NavbarComponent } from '../navbar/navbar';
@@ -16,18 +18,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-employees',
   imports: [
     CommonModule, FormsModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatSelectModule, MatIconModule, MatProgressSpinnerModule, NavbarComponent, TranslatePipe,
+    MatSelectModule, MatIconModule, MatProgressSpinnerModule,
+    MatPaginatorModule, MatSortModule, MatProgressBarModule,
+    NavbarComponent, TranslatePipe,
   ],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
 })
-export class EmployeesComponent implements OnInit
+export class EmployeesComponent implements OnInit, OnDestroy
 {
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
@@ -38,11 +43,10 @@ export class EmployeesComponent implements OnInit
 
   employees: Employee[] = [];
   departments: Department[] = [];
-  displayedColumns: string[] = 
-  [
-  'expand', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
-  'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
-  'status', 'actions'
+  displayedColumns: string[] = [
+    'expand', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
+    'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
+    'status', 'actions'
   ];
 
   newEmployee: NewEmployee = this.emptyNewEmployee();
@@ -55,16 +59,40 @@ export class EmployeesComponent implements OnInit
   deletingId: number | null = null;
   togglingId: number | null = null;
   expandedId: number | null = null;
+  isLoading = false;
 
-  toggleExpand(item: Employee): void
-  {
-  this.expandedId = this.expandedId === item.id ? null : item.id;
-  }
+  searchTerm = '';
+  private search$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  sortActive = 'employeeNo';
+  sortDirection: 'asc' | 'desc' | '' = 'asc';
+
+  pageIndex = 0;
+  pageSize = 10;
+  totalCount = 0;
+  pageSizeOptions = [5, 10, 25, 50];
 
   ngOnInit()
   {
-    this.loadData();
     this.loadDepartments();
+
+    this.search$.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.pageIndex = 0;
+      this.loadData();
+    });
+
+    this.loadData();
+  }
+
+  ngOnDestroy(): void
+  {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private emptyNewEmployee(): NewEmployee
@@ -77,25 +105,58 @@ export class EmployeesComponent implements OnInit
     };
   }
 
+  onSearchChange(term: string): void
+  {
+    this.search$.next(term);
+  }
+
+  onSortChange(sort: Sort): void
+  {
+    this.sortActive = sort.active;
+    this.sortDirection = sort.direction;
+    this.pageIndex = 0;
+    this.loadData();
+  }
+
+  onPageChange(event: PageEvent): void
+  {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadData();
+  }
+
   loadData()
   {
-    this.employeeService.getEmployees().subscribe({
-      next: (data) => {
-        this.employees = [...data];
+    this.isLoading = true;
+    this.employeeService.getEmployees({
+      pageNumber: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      sortBy: this.sortDirection ? this.sortActive : undefined,
+      sortDescending: this.sortDirection === 'desc',
+      search: this.searchTerm || undefined
+    }).subscribe({
+      next: (result) => {
+        this.employees = result.items;
+        this.totalCount = result.totalCount;
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('API Error: Connection dropped.', error);
         this.snackbar.showError(this.translate.instant('employees.fetchError'));
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadDepartments()
   {
-    this.departmentService.getDepartments().subscribe({
-      next: (data) => {
-        this.departments = [...data];
+    // pageSize:1000 here is deliberate — this populates the Department dropdown in the
+    // add/edit form, which needs effectively "all" departments, not a paginated page of them.
+    this.departmentService.getDepartments({ pageNumber: 1, pageSize: 1000 }).subscribe({
+      next: (result) => {
+        this.departments = result.items;
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -237,5 +298,10 @@ export class EmployeesComponent implements OnInit
         this.snackbar.showError(this.translate.instant('employees.statusUpdateError'));
       }
     });
+  }
+
+  toggleExpand(item: Employee): void
+  {
+    this.expandedId = this.expandedId === item.id ? null : item.id;
   }
 }

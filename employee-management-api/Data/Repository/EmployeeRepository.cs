@@ -51,14 +51,48 @@ namespace Data.Repository
             return await _context.Employees.AnyAsync(e => e.DepartmentId == departmentId);
         }
 
-        public async Task<int> GetCountByDepartmentIdAsync(int departmentId)
+        public async Task<(List<Employee> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
-            return await _context.Employees.CountAsync(e => e.DepartmentId == departmentId);
+            var query = _context.Employees.AsNoTracking().Include(e => e.Department).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(e =>
+                    e.EmployeeNo.Contains(search) ||
+                    e.NameEn.Contains(search) ||
+                    e.NameAr.Contains(search) ||
+                    e.Username.Contains(search) ||
+                    e.NationalNo.Contains(search) ||
+                    (e.Email != null && e.Email.Contains(search)));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            query = sortBy switch
+            {
+                "employeeNo" => sortDescending ? query.OrderByDescending(e => e.EmployeeNo) : query.OrderBy(e => e.EmployeeNo),
+                "nameEn" => sortDescending ? query.OrderByDescending(e => e.NameEn) : query.OrderBy(e => e.NameEn),
+                "nameAr" => sortDescending ? query.OrderByDescending(e => e.NameAr) : query.OrderBy(e => e.NameAr),
+                "departmentName" => sortDescending ? query.OrderByDescending(e => e.Department!.NameEn) : query.OrderBy(e => e.Department!.NameEn),
+                "username" => sortDescending ? query.OrderByDescending(e => e.Username) : query.OrderBy(e => e.Username),
+                "nationalNo" => sortDescending ? query.OrderByDescending(e => e.NationalNo) : query.OrderBy(e => e.NationalNo),
+                "gender" => sortDescending ? query.OrderByDescending(e => e.Gender) : query.OrderBy(e => e.Gender),
+                "birthdate" => sortDescending ? query.OrderByDescending(e => e.Birthdate) : query.OrderBy(e => e.Birthdate),
+                "mobileNumber" => sortDescending ? query.OrderByDescending(e => e.MobileNumber) : query.OrderBy(e => e.MobileNumber),
+                "email" => sortDescending ? query.OrderByDescending(e => e.Email) : query.OrderBy(e => e.Email),
+                "startWorkingDate" => sortDescending ? query.OrderByDescending(e => e.StartWorkingDate) : query.OrderBy(e => e.StartWorkingDate),
+                "status" => sortDescending ? query.OrderByDescending(e => e.Status) : query.OrderBy(e => e.Status),
+                _ => query.OrderBy(e => e.Id)
+            };
+
+            var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return (items, totalCount);
         }
 
-        public async Task<Dictionary<int, int>> GetEmployeeCountsByDepartmentAsync()
+        public async Task<Dictionary<int, int>> GetEmployeeCountsForDepartmentIdsAsync(IEnumerable<int> departmentIds)
         {
             return await _context.Employees
+                .Where(e => departmentIds.Contains(e.DepartmentId))
                 .GroupBy(e => e.DepartmentId)
                 .Select(g => new { DepartmentId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.DepartmentId, x => x.Count);

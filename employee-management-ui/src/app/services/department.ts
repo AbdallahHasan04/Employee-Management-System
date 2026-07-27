@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Department
@@ -25,14 +25,44 @@ export interface CreateDepartmentResponse
     department: Department;
 }
 
+export interface PagedResult<T>
+{
+    items: T[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+}
+
+export interface DepartmentQueryParams
+{
+    pageNumber: number;
+    pageSize: number;
+    sortBy?: string;
+    sortDescending?: boolean;
+    search?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
   private http = inject(HttpClient);
   private apiUrl = 'https://localhost:7038/api/departments';
 
-    getDepartments(): Observable<Department[]>
+    getDepartments(params: DepartmentQueryParams): Observable<PagedResult<Department>>
     {
-        return this.http.get<Department[]>(this.apiUrl);
+        let httpParams = new HttpParams()
+            .set('pageNumber', params.pageNumber)
+            .set('pageSize', params.pageSize);
+
+        if (params.sortBy) {
+            httpParams = httpParams
+                .set('sortBy', params.sortBy)
+                .set('sortDescending', params.sortDescending ?? false);
+        }
+        if (params.search) {
+            httpParams = httpParams.set('search', params.search);
+        }
+
+        return this.http.get<PagedResult<Department>>(this.apiUrl, { params: httpParams });
     }
 
     addDepartment(department: NewDepartment): Observable<CreateDepartmentResponse>
