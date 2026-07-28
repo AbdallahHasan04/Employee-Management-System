@@ -11,9 +11,15 @@ namespace API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _service;
-        public EmployeesController(IEmployeeService service)
+        private readonly IFileStorageService _fileStorageService;
+
+        private static readonly string[] AllowedContentTypes = { "image/jpeg", "image/png", "image/webp" };
+        private const long MaxFileSizeBytes = 2 * 1024 * 1024; // 2 MB
+
+        public EmployeesController(IEmployeeService service, IFileStorageService fileStorageService)
         {
             _service = service;
+            _fileStorageService = fileStorageService;
         }
 
         [HttpGet]
@@ -75,6 +81,58 @@ namespace API.Controllers
                 return NotFound(new { message = $"Cannot delete. Employee with ID {id} not found." });
             }
             return Ok(new { message = "Employee deleted successfully!" });
+        }
+
+        [HttpPost("{id}/photo")]
+        public async Task<ActionResult> UploadPhoto(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { message = "No file was uploaded." });
+            }
+
+            if (file.Length > MaxFileSizeBytes)
+            {
+                return BadRequest(new { message = "Image must be 2MB or smaller." });
+            }
+
+            if (!AllowedContentTypes.Contains(file.ContentType))
+            {
+                return BadRequest(new { message = "Only JPEG, PNG, and WEBP images are allowed." });
+            }
+
+            var extension = Path.GetExtension(file.FileName);
+            if (string.IsNullOrWhiteSpace(extension))
+            {
+                extension = file.ContentType switch
+                {
+                    "image/png" => ".png",
+                    "image/webp" => ".webp",
+                    _ => ".jpg"
+                };
+            }
+
+            await using var stream = file.OpenReadStream();
+            var relativePath = await _fileStorageService.SaveEmployeePhotoAsync(id, stream, extension);
+
+            var updated = await _service.UpdateProfileImageAsync(id, relativePath);
+            if (updated == null)
+            {
+                return NotFound(new { message = $"Employee with id {id} not found" });
+            }
+
+            return Ok(new { message = "Photo uploaded successfully!", employee = updated });
+        }
+
+        [HttpDelete("{id}/photo")]
+        public async Task<ActionResult> RemovePhoto(int id)
+        {
+            var removed = await _service.RemoveProfileImageAsync(id);
+            if (!removed)
+            {
+                return NotFound(new { message = $"Employee with id {id} not found" });
+            }
+            return Ok(new { message = "Photo removed successfully!" });
         }
     }
 }

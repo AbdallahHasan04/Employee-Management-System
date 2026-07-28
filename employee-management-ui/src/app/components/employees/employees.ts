@@ -20,6 +20,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+const MAX_PHOTO_SIZE_BYTES = 2 * 1024 * 1024;
+const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 @Component({
   selector: 'app-employees',
   imports: [
@@ -44,7 +47,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
   employees: Employee[] = [];
   departments: Department[] = [];
   displayedColumns: string[] = [
-    'expand', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
+    'expand', 'photo', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
     'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
     'status', 'actions'
   ];
@@ -60,6 +63,10 @@ export class EmployeesComponent implements OnInit, OnDestroy
   togglingId: number | null = null;
   expandedId: number | null = null;
   isLoading = false;
+
+  selectedPhotoFile: File | null = null;
+  selectedPhotoPreviewUrl: string | null = null;
+  isUploadingPhoto = false;
 
   searchTerm = '';
   private search$ = new Subject<string>();
@@ -93,6 +100,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
   {
     this.destroy$.next();
     this.destroy$.complete();
+    this.clearSelectedPhoto();
   }
 
   private emptyNewEmployee(): NewEmployee
@@ -152,8 +160,6 @@ export class EmployeesComponent implements OnInit, OnDestroy
 
   loadDepartments()
   {
-    // pageSize:1000 here is deliberate — this populates the Department dropdown in the
-    // add/edit form, which needs effectively "all" departments, not a paginated page of them.
     this.departmentService.getDepartments({ pageNumber: 1, pageSize: 1000 }).subscribe({
       next: (result) => {
         this.departments = result.items;
@@ -161,6 +167,103 @@ export class EmployeesComponent implements OnInit, OnDestroy
       },
       error: (error) => {
         console.error('API Error: Could not fetch departments.', error);
+      }
+    });
+  }
+
+  getPhotoUrl(path: string | null | undefined): string | null
+  {
+    return this.employeeService.getPhotoUrl(path);
+  }
+
+  private validatePhotoFile(file: File): boolean
+  {
+    if (!ALLOWED_PHOTO_TYPES.includes(file.type)) {
+      this.snackbar.showError(this.translate.instant('employees.invalidPhotoType'));
+      return false;
+    }
+    if (file.size > MAX_PHOTO_SIZE_BYTES) {
+      this.snackbar.showError(this.translate.instant('employees.photoTooLarge'));
+      return false;
+    }
+    return true;
+  }
+
+  onNewPhotoSelected(event: Event): void
+  {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!this.validatePhotoFile(file)) {
+      input.value = '';
+      return;
+    }
+
+    this.clearSelectedPhoto();
+    this.selectedPhotoFile = file;
+    this.selectedPhotoPreviewUrl = URL.createObjectURL(file);
+  }
+
+  clearSelectedPhoto(): void
+  {
+    if (this.selectedPhotoPreviewUrl) {
+      URL.revokeObjectURL(this.selectedPhotoPreviewUrl);
+    }
+    this.selectedPhotoFile = null;
+    this.selectedPhotoPreviewUrl = null;
+  }
+
+  onEditPhotoSelected(event: Event): void
+  {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.editingEmployee) return;
+
+    if (!this.validatePhotoFile(file)) {
+      input.value = '';
+      return;
+    }
+
+    this.isUploadingPhoto = true;
+    this.employeeService.uploadPhoto(this.editingEmployee.id, file).pipe(
+      finalize(() => {
+        this.isUploadingPhoto = false;
+        input.value = '';
+      })
+    ).subscribe({
+      next: (response) => {
+        this.snackbar.showSuccess(this.translate.instant('employees.photoUploadSuccess'));
+        this.editingEmployee = response.employee;
+        this.loadData();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('API Error: Photo upload failed.', error);
+        this.snackbar.showError(error.error?.message || this.translate.instant('employees.photoUploadError'));
+      }
+    });
+  }
+
+  removeEditingPhoto(): void
+  {
+    if (!this.editingEmployee) return;
+
+    this.isUploadingPhoto = true;
+    this.employeeService.removePhoto(this.editingEmployee.id).pipe(
+      finalize(() => this.isUploadingPhoto = false)
+    ).subscribe({
+      next: () => {
+        this.snackbar.showSuccess(this.translate.instant('employees.photoRemoveSuccess'));
+        if (this.editingEmployee) {
+          this.editingEmployee = { ...this.editingEmployee, profileImagePath: null };
+        }
+        this.loadData();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('API Error: Photo removal failed.', error);
+        this.snackbar.showError(this.translate.instant('employees.photoRemoveError'));
       }
     });
   }
@@ -179,17 +282,45 @@ export class EmployeesComponent implements OnInit, OnDestroy
     }
 
     this.isSubmitting = true;
-    this.employeeService.addEmployee(this.newEmployee).pipe(
-      finalize(() => this.isSubmitting = false)
-    ).subscribe({
+    this.employeeService.addEmployee(this.newEmployee).subscribe({
       next: (response) => {
         this.lastCreatedUsername = response.employee.username;
         this.lastGeneratedPassword = response.employee.generatedPassword ?? null;
-        this.newEmployee = this.emptyNewEmployee();
-        this.loadData();
-        this.cdr.detectChanges();
+
+        const newId = response.employee.id;
+        const photoFile = this.selectedPhotoFile;
+
+        if (photoFile) {
+          this.employeeService.uploadPhoto(newId, photoFile).pipe(
+            finalize(() => {
+              this.isSubmitting = false;
+              this.clearSelectedPhoto();
+            })
+          ).subscribe({
+            next: () => {
+              this.newEmployee = this.emptyNewEmployee();
+              this.loadData();
+              this.cdr.detectChanges();
+            },
+            error: (error) => {
+              console.error('API Error: Photo upload failed.', error);
+              this.snackbar.showError(this.translate.instant('employees.photoUploadError'));
+              this.newEmployee = this.emptyNewEmployee();
+              this.loadData();
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.isSubmitting = false;
+          this.newEmployee = this.emptyNewEmployee();
+          this.loadData();
+          this.cdr.detectChanges();
+        }
       },
-      error: (error) => console.error('API Error: Add failed.', error)
+      error: (error) => {
+        console.error('API Error: Add failed.', error);
+        this.isSubmitting = false;
+      }
     });
   }
 

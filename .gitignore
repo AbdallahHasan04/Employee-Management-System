@@ -5,3 +5,5 @@ obj/
 node_modules/
 dist/
 .angular/
+employee-management-api/employee-management-api/wwwroot/employee-photos/*
+!employee-management-api/employee-management-api/wwwroot/employee-photos/.gitkeep

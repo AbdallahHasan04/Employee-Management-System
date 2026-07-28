@@ -21,5 +21,6 @@
         public string? ModifiedBy { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? GeneratedPassword { get; set; }
+        public string? ProfileImagePath { get; set; }
     }
 }

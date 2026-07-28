@@ -22,5 +22,6 @@ namespace Core.Entities
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public string? ModifiedBy { get; set; }
         public DateTime? ModificationDate { get; set; }
+        public string? ProfileImagePath { get; set; }
     }
 }

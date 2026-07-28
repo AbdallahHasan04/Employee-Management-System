@@ -75,7 +75,18 @@
     "deleteSuccess": "Employee deleted successfully!",
     "statusUpdateSuccess": "Status updated successfully!",
     "noResults": "No employees match your search.",
-    "searchHint": "Search by: Employee No, Name, Username, National No, or Email"
+    "searchHint": "Search by: Employee No, Name, Username, National No, or Email",
+    "photo": "Photo",
+    "uploadPhoto": "Upload Photo",
+    "changePhoto": "Change Photo",
+    "removePhoto": "Remove Photo",
+    "noPhotoSelected": "No photo selected",
+    "photoUploadSuccess": "Photo uploaded successfully!",
+    "photoRemoveSuccess": "Photo removed successfully!",
+    "photoUploadError": "Could not upload photo.",
+    "photoRemoveError": "Could not remove photo.",
+    "invalidPhotoType": "Only JPEG, PNG, and WEBP images are allowed.",
+    "photoTooLarge": "Image must be 2MB or smaller."
   },
   "departments": {
     "title": "Department Page",

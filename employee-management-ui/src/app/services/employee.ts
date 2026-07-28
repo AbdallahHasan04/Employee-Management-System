@@ -18,6 +18,7 @@ export interface Employee
     startWorkingDate: string | null;
     departmentId: number;
     departmentName?: string;
+    profileImagePath: string | null;
     createdBy: string | null;
     creationDate: string;
     modifiedBy: string | null;
@@ -31,6 +32,12 @@ export type NewEmployee = Pick<Employee,
 > & { departmentId: number | null };
 
 export interface CreateEmployeeResponse
+{
+    message: string;
+    employee: Employee;
+}
+
+export interface PhotoResponse
 {
     message: string;
     employee: Employee;
@@ -57,6 +64,7 @@ export interface EmployeeQueryParams
 export class EmployeeService {
   private http = inject(HttpClient);
   private apiUrl = 'https://localhost:7038/api/employees';
+  private photoBaseUrl = 'https://localhost:7038/';
 
     getEmployees(params: EmployeeQueryParams): Observable<PagedResult<Employee>>
     {
@@ -89,5 +97,22 @@ export class EmployeeService {
     deleteEmployee(id: number): Observable<any>
     {
         return this.http.delete(`${this.apiUrl}/${id}`);
+    }
+
+    uploadPhoto(id: number, file: File): Observable<PhotoResponse>
+    {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.post<PhotoResponse>(`${this.apiUrl}/${id}/photo`, formData);
+    }
+
+    removePhoto(id: number): Observable<any>
+    {
+        return this.http.delete(`${this.apiUrl}/${id}/photo`);
+    }
+
+    getPhotoUrl(path: string | null | undefined): string | null
+    {
+        return path ? `${this.photoBaseUrl}${path}` : null;
     }
 }

@@ -75,7 +75,18 @@
     "deleteSuccess": "تم حذف الموظف بنجاح!",
     "statusUpdateSuccess": "تم تحديث الحالة بنجاح!",
     "noResults": "لا يوجد موظفون مطابقون لبحثك.",
-    "searchHint": "البحث حسب: الرقم الوظيفي، الاسم، اسم المستخدم، الرقم الوطني، أو البريد الإلكتروني"
+    "searchHint": "البحث حسب: الرقم الوظيفي، الاسم، اسم المستخدم، الرقم الوطني، أو البريد الإلكتروني",
+    "photo": "الصورة",
+    "uploadPhoto": "رفع صورة",
+    "changePhoto": "تغيير الصورة",
+    "removePhoto": "إزالة الصورة",
+    "noPhotoSelected": "لم يتم اختيار صورة",
+    "photoUploadSuccess": "تم رفع الصورة بنجاح!",
+    "photoRemoveSuccess": "تمت إزالة الصورة بنجاح!",
+    "photoUploadError": "تعذر رفع الصورة.",
+    "photoRemoveError": "تعذر إزالة الصورة.",
+    "invalidPhotoType": "يُسمح فقط بصور JPEG وPNG وWEBP.",
+    "photoTooLarge": "يجب ألا يتجاوز حجم الصورة 2 ميجابايت."
   },
   "departments": {
     "title": "صفحة الأقسام",

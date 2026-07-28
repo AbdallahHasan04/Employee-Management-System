@@ -50,6 +50,7 @@ namespace Data.Context
                 entity.Property(e => e.CreationDate).HasColumnName("CREATION_DATE");
                 entity.Property(e => e.ModifiedBy).HasColumnName("MODIFIED_BY");
                 entity.Property(e => e.ModificationDate).HasColumnName("MODIFICATION_DATE");
+                entity.Property(e => e.ProfileImagePath).HasColumnName("PROFILE_IMAGE_PATH");
 
                 entity.HasOne<User>()
                       .WithOne()

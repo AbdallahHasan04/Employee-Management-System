@@ -27,6 +27,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -104,7 +105,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "employee-photos"));
+
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();

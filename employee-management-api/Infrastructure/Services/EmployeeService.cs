@@ -11,12 +11,14 @@ namespace Infrastructure.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFileStorageService _fileStorageService;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public EmployeeService(IEmployeeRepository employeeRepository, IUserRepository userRepository, IUnitOfWork unitOfWork, IFileStorageService fileStorageService)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
@@ -133,8 +135,41 @@ namespace Infrastructure.Services
                 return false;
             }
 
+            _fileStorageService.DeleteEmployeePhoto(existing.ProfileImagePath);
+
             await _employeeRepository.DeleteAsync(id);
             await _userRepository.DeleteByUsernameAsync(existing.Username);
+            return true;
+        }
+
+        public async Task<EmployeeDto?> UpdateProfileImageAsync(int id, string relativePath)
+        {
+            var existing = await _employeeRepository.GetByIdAsync(id);
+            if (existing == null)
+            {
+                return null;
+            }
+
+            // clean up the old photo file, if one existed, so uploads don't pile up orphaned files
+            _fileStorageService.DeleteEmployeePhoto(existing.ProfileImagePath);
+
+            existing.ProfileImagePath = relativePath;
+            await _employeeRepository.UpdateAsync(existing);
+
+            return ToDto(existing);
+        }
+
+        public async Task<bool> RemoveProfileImageAsync(int id)
+        {
+            var existing = await _employeeRepository.GetByIdAsync(id);
+            if (existing == null)
+            {
+                return false;
+            }
+
+            _fileStorageService.DeleteEmployeePhoto(existing.ProfileImagePath);
+            existing.ProfileImagePath = null;
+            await _employeeRepository.UpdateAsync(existing);
             return true;
         }
 
@@ -156,6 +191,7 @@ namespace Infrastructure.Services
                 StartWorkingDate = employee.StartWorkingDate,
                 DepartmentId = employee.DepartmentId,
                 DepartmentName = employee.Department?.NameEn,
+                ProfileImagePath = employee.ProfileImagePath,
                 CreatedBy = employee.CreatedBy,
                 CreationDate = employee.CreationDate,
                 ModifiedBy = employee.ModifiedBy,
