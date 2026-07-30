@@ -75,7 +75,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var deleted = await _service.DeleteEmployeeAsync(id);
+            var deletedBy = User.Identity?.Name;
+            var deleted = await _service.DeleteEmployeeAsync(id, deletedBy);
             if (!deleted)
             {
                 return NotFound(new { message = $"Cannot delete. Employee with ID {id} not found." });

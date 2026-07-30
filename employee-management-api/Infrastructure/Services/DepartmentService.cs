@@ -81,7 +81,7 @@ namespace Infrastructure.Services
             return true;
         }
 
-        public async Task<DepartmentDeleteResult> DeleteDepartmentAsync(int id)
+        public async Task<DepartmentDeleteResult> DeleteDepartmentAsync(int id, string? deletedBy)
         {
             var existing = await _departmentRepository.GetByIdAsync(id);
             if (existing == null)
@@ -95,7 +95,7 @@ namespace Infrastructure.Services
                 return DepartmentDeleteResult.HasEmployees;
             }
 
-            await _departmentRepository.DeleteAsync(id);
+            await _departmentRepository.DeleteAsync(id, deletedBy);
             return DepartmentDeleteResult.Success;
         }
 

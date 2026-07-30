@@ -7,6 +7,6 @@ namespace Common.IRepository
         Task<User?> GetByUsernameAsync(string username);
         Task AddAsync(User user);
         Task UpdateAsync(User user);
-        Task DeleteByUsernameAsync(string username);
+        Task DeleteByUsernameAsync(string username, string? deletedBy);
     }
 }

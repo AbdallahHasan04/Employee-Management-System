@@ -10,6 +10,7 @@ namespace Core.Entities
         public string NameAr { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string Status { get; set; } = "Active";
+        public bool IsDeleted { get; set; } = false;
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public string? ModifiedBy { get; set; }

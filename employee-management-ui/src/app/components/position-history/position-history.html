@@ -1,0 +1,169 @@
+<app-navbar></app-navbar>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'common.eyebrow' | translate }}</p>
+      <h1>{{ 'positionHistory.title' | translate }}</h1>
+    </div>
+  </header>
+
+  <section class="card form-card">
+    <h2 class="card-title">{{ 'positionHistory.assignTitle' | translate }}</h2>
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'positionHistory.employee' | translate }}</mat-label>
+        <mat-select [(ngModel)]="newAssignment.employeeId">
+          @for (emp of employees; track emp.id) {
+            <mat-option [value]="emp.id">{{ emp.nameEn }} ({{ emp.employeeNo }})</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'positionHistory.position' | translate }}</mat-label>
+        <mat-select [(ngModel)]="newAssignment.positionId">
+          @for (pos of positions; track pos.id) {
+            <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'positionHistory.startDate' | translate }}</mat-label>
+        <input matInput type="date" [(ngModel)]="newAssignment.startDate">
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" (click)="onAssign()" [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <mat-icon>add</mat-icon>
+        }
+        {{ 'positionHistory.assignPosition' | translate }}
+      </button>
+    </div>
+  </section>
+
+  <section class="card table-card">
+    <div class="table-card-header">
+      <h2 class="card-title">{{ 'positionHistory.allHistory' | translate }}</h2>
+      <span class="record-count">{{ totalCount }} {{ (totalCount === 1 ? 'common.record' : 'common.records') | translate }}</span>
+    </div>
+
+    <div class="search-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
+        @if (searchTerm) {
+          <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <span class="search-hint">{{ 'positionHistory.searchHint' | translate }}</span>
+    </div>
+
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <div class="table-scroll">
+      <table mat-table [dataSource]="history" class="roster-table" multiTemplateDataRows matSort
+             [matSortActive]="sortActive" [matSortDirection]="sortDirection" (matSortChange)="onSortChange($event)">
+
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button (click)="toggleExpand(item); $event.stopPropagation()" aria-label="Toggle details">
+              @if (expandedId === item.id) {
+                <mat-icon>expand_less</mat-icon>
+              } @else {
+                <mat-icon>expand_more</mat-icon>
+              }
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="employeeName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positionHistory.employeeName' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.employeeName || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="positionName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positionHistory.positionName' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.positionName || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positionHistory.startDate' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.startDate | date:'mediumDate'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="endDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positionHistory.endDate' | translate }} </th>
+          <td mat-cell *matCellDef="let item">
+            @if (item.endDate) {
+              {{ item.endDate | date:'mediumDate' }}
+            } @else {
+              <span class="pill pill-active">{{ 'positionHistory.current' | translate }}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let item" [attr.colspan]="displayedColumns.length" class="detail-cell">
+            <div class="detail-row-content" [class.expanded]="expandedId === item.id">
+              <div class="detail-grid">
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.createdBy' | translate }}</span>
+                  <span class="detail-value">{{ item.createdBy || '—' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.creationDate' | translate }}</span>
+                  <span class="detail-value">{{ item.creationDate | date:'medium' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.modifiedBy' | translate }}</span>
+                  <span class="detail-value">{{ item.modifiedBy || '—' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.modificationDate' | translate }}</span>
+                  <span class="detail-value">{{ item.modificationDate ? (item.modificationDate | date:'medium') : '—' }}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" (click)="toggleExpand(row)"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+      </table>
+    </div>
+
+    @if (!isLoading && history.length === 0 && !searchTerm) {
+      <div class="empty-state">
+        <mat-icon>history</mat-icon>
+        <p>{{ 'positionHistory.noHistory' | translate }}</p>
+      </div>
+    }
+
+    @if (!isLoading && history.length === 0 && searchTerm) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'positionHistory.noResults' | translate }}</p>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>

@@ -26,7 +26,9 @@
     "brand": "إدارة الموظفين",
     "employees": "الموظفون",
     "departments": "الأقسام",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "positions": "المناصب",
+    "positionHistory": "سجل المناصب"
   },
   "lang": {
     "switchTo": "English"
@@ -86,7 +88,9 @@
     "photoUploadError": "تعذر رفع الصورة.",
     "photoRemoveError": "تعذر إزالة الصورة.",
     "invalidPhotoType": "يُسمح فقط بصور JPEG وPNG وWEBP.",
-    "photoTooLarge": "يجب ألا يتجاوز حجم الصورة 2 ميجابايت."
+    "photoTooLarge": "يجب ألا يتجاوز حجم الصورة 2 ميجابايت.",
+    "position": "المنصب",
+    "positionRequired": "يرجى اختيار المنصب."
   },
   "departments": {
     "title": "صفحة الأقسام",
@@ -123,5 +127,45 @@
     "title401": "غير مصرح",
     "message401": "انتهت صلاحية جلستك ولا يمكنك الوصول إلى هذه الصفحة. يرجى تسجيل الدخول مرة أخرى للمتابعة.",
     "backToLogin": "الذهاب إلى تسجيل الدخول"
+  },
+  "positions": {
+    "title": "صفحة المناصب",
+    "newTitle": "إضافة منصب",
+    "editTitle": "تعديل المنصب",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameAr": "الاسم (عربي)",
+    "addPosition": "إضافة منصب",
+    "allPositions": "جميع المناصب",
+    "noPositions": "لا توجد مناصب بعد. أضف أول منصب أعلاه.",
+    "noResults": "لا توجد مناصب مطابقة لبحثك.",
+    "fetchError": "تعذر جلب قائمة المناصب. تأكد من تشغيل الخادم",
+    "requiredFields": "الاسم (إنجليزي) والاسم (عربي) حقول مطلوبة.",
+    "updateRequiredFields": "الاسم (إنجليزي) والاسم (عربي) حقول مطلوبة.",
+    "notFound": "المنصب غير موجود.",
+    "deleteError": "لا يمكن حذف هذا المنصب لأنه مُعيّن حاليًا لموظف واحد أو أكثر.",
+    "addSuccess": "تمت إضافة المنصب بنجاح!",
+    "updateSuccess": "تم تحديث المنصب بنجاح!",
+    "deleteSuccess": "تم حذف المنصب بنجاح!",
+    "searchHint": "البحث حسب: الاسم"
+  },
+  "positionHistory": {
+    "title": "سجل المناصب",
+    "assignTitle": "تعيين منصب",
+    "employee": "الموظف",
+    "position": "المنصب",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "current": "حالي",
+    "assignPosition": "تعيين منصب",
+    "allHistory": "جميع سجلات المناصب",
+    "noHistory": "لا يوجد سجل مناصب بعد. عيّن منصبًا أعلاه.",
+    "noResults": "لا توجد سجلات مطابقة لبحثك.",
+    "fetchError": "تعذر جلب سجل المناصب. تأكد من تشغيل الخادم",
+    "requiredFields": "الموظف والمنصب وتاريخ البدء حقول مطلوبة.",
+    "assignSuccess": "تم تعيين المنصب بنجاح!",
+    "assignError": "تعذر تعيين المنصب.",
+    "searchHint": "البحث حسب: الرقم الوظيفي، اسم الموظف، أو اسم المنصب",
+    "employeeName": "اسم الموظف",
+    "positionName": "اسم المنصب"
   }
 }

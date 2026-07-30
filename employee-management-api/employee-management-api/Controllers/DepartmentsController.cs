@@ -69,7 +69,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var result = await _service.DeleteDepartmentAsync(id);
+            var deletedBy = User.Identity?.Name;
+            var result = await _service.DeleteDepartmentAsync(id, deletedBy);
 
             return result switch
             {

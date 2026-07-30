@@ -26,7 +26,9 @@
     "brand": "Employee Management",
     "employees": "Employees",
     "departments": "Departments",
-    "logout": "Logout"
+    "logout": "Logout",
+    "positions": "Positions",
+    "positionHistory": "Position History"
   },
   "lang": {
     "switchTo": "العربية"
@@ -86,7 +88,9 @@
     "photoUploadError": "Could not upload photo.",
     "photoRemoveError": "Could not remove photo.",
     "invalidPhotoType": "Only JPEG, PNG, and WEBP images are allowed.",
-    "photoTooLarge": "Image must be 2MB or smaller."
+    "photoTooLarge": "Image must be 2MB or smaller.",
+    "position": "Position",
+    "positionRequired": "Please select a position."
   },
   "departments": {
     "title": "Department Page",
@@ -120,5 +124,45 @@
     "title401": "Unauthorized",
     "message401": "Your session has expired and you are not authorized to view this page. Please log in again to continue.",
     "backToLogin": "Go to Login"
-  }
+  },
+  "positions": {
+    "title": "Position Page",
+    "newTitle": "New Position",
+    "editTitle": "Edit Position",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "addPosition": "Add Position",
+    "allPositions": "All Positions",
+    "noPositions": "No positions yet. Add the first one above.",
+    "noResults": "No positions match your search.",
+    "fetchError": "Could not fetch position list. Verify your backend is running",
+    "requiredFields": "Name (EN) and Name (AR) are required.",
+    "updateRequiredFields": "Name (EN) and Name (AR) are required.",
+    "notFound": "Position not found.",
+    "deleteError": "This position cannot be deleted because it is currently assigned to one or more employees.",
+    "addSuccess": "Position added successfully!",
+    "updateSuccess": "Position updated successfully!",
+    "deleteSuccess": "Position deleted successfully!",
+    "searchHint": "Search by: Name"
+  },
+  "positionHistory": {
+    "title": "Position History",
+    "assignTitle": "Assign Position",
+    "employee": "Employee",
+    "position": "Position",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "current": "Current",
+    "assignPosition": "Assign Position",
+    "allHistory": "All Position History",
+    "noHistory": "No position history yet. Assign a position above.",
+    "noResults": "No records match your search.",
+    "fetchError": "Could not fetch position history. Verify your backend is running",
+    "requiredFields": "Employee, Position, and Start Date are required.",
+    "assignSuccess": "Position assigned successfully!",
+    "assignError": "Could not assign position.",
+    "searchHint": "Search by: Employee No, Employee Name, or Position Name",
+    "employeeName": "Employee Name",
+    "positionName": "Position Name"
+}
 }

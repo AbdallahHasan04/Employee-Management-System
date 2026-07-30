@@ -18,10 +18,11 @@ namespace Core.Entities
         public DateTime? StartWorkingDate { get; set; }
         public int DepartmentId { get; set; }
         public Department? Department { get; set; }
+        public string? ProfileImagePath { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public string? ModifiedBy { get; set; }
         public DateTime? ModificationDate { get; set; }
-        public string? ProfileImagePath { get; set; }
     }
 }

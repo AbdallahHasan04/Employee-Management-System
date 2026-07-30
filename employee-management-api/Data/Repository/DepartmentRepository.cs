@@ -36,12 +36,14 @@ namespace Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string? deletedBy)
         {
             var department = await _context.Departments.FindAsync(id);
             if (department != null)
             {
-                _context.Departments.Remove(department);
+                department.IsDeleted = true;
+                department.ModifiedBy = deletedBy;
+                department.ModificationDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
         }
@@ -61,8 +63,6 @@ namespace Data.Repository
 
             var totalCount = await query.CountAsync();
 
-            // employeeCount isn't a real column, so it needs a correlated-subquery sort
-            // rather than the simple property switch used below.
             if (sortBy == "employeeCount")
             {
                 var countsQuery = query.Select(d => new

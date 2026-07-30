@@ -2,13 +2,15 @@
 
 namespace Core.Entities
 {
-    public class User
+    public class EmployeePosition
     {
         public int Id { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Status { get; set; } = "Active";
+        public int EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
+        public int PositionId { get; set; }
+        public Position? Position { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public bool IsDeleted { get; set; } = false;
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;

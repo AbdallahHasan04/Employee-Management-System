@@ -36,12 +36,14 @@ namespace Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string? deletedBy)
         {
             var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
             {
-                _context.Employees.Remove(employee);
+                employee.IsDeleted = true;
+                employee.ModifiedBy = deletedBy;
+                employee.ModificationDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
         }

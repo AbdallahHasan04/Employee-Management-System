@@ -8,6 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil, finalize } from 'rxjs';
 import { EmployeeService, Employee, NewEmployee } from '../../services/employee';
 import { DepartmentService, Department } from '../../services/department';
+import { PositionService, Position } from '../../services/position';
 import { NavbarComponent } from '../navbar/navbar';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
 import { SnackbarService } from '../../services/snackbar';
@@ -39,6 +40,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
 {
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
+  private positionService = inject(PositionService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialog = inject(MatDialog);
@@ -46,8 +48,9 @@ export class EmployeesComponent implements OnInit, OnDestroy
 
   employees: Employee[] = [];
   departments: Department[] = [];
+  positions: Position[] = [];
   displayedColumns: string[] = [
-    'expand', 'photo', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'username', 'nationalNo',
+    'expand', 'photo', 'employeeNo', 'nameEn', 'nameAr', 'departmentName', 'positionName', 'username', 'nationalNo',
     'gender', 'birthdate', 'mobileNumber', 'email', 'startWorkingDate',
     'status', 'actions'
   ];
@@ -83,9 +86,10 @@ export class EmployeesComponent implements OnInit, OnDestroy
   ngOnInit()
   {
     this.loadDepartments();
+    this.loadPositions();
 
     this.search$.pipe(
-      debounceTime(400),
+      debounceTime(0),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(() => {
@@ -109,7 +113,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
       employeeNo: '', nameEn: '', nameAr: '', username: '',
       birthdate: null, nationalNo: '', gender: '',
       mobileNumber: null, email: null, startWorkingDate: null,
-      departmentId: null
+      departmentId: null, positionId: null
     };
   }
 
@@ -167,6 +171,19 @@ export class EmployeesComponent implements OnInit, OnDestroy
       },
       error: (error) => {
         console.error('API Error: Could not fetch departments.', error);
+      }
+    });
+  }
+
+  loadPositions()
+  {
+    this.positionService.getPositions({ pageNumber: 1, pageSize: 1000 }).subscribe({
+      next: (result) => {
+        this.positions = result.items;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('API Error: Could not fetch positions.', error);
       }
     });
   }
@@ -281,6 +298,11 @@ export class EmployeesComponent implements OnInit, OnDestroy
       return;
     }
 
+    if (!this.newEmployee.positionId) {
+      this.snackbar.showError(this.translate.instant('employees.positionRequired'));
+      return;
+    }
+
     this.isSubmitting = true;
     this.employeeService.addEmployee(this.newEmployee).subscribe({
       next: (response) => {
@@ -335,6 +357,11 @@ export class EmployeesComponent implements OnInit, OnDestroy
 
     if (!this.editingEmployee.nameEn.trim() || !this.editingEmployee.nationalNo.trim() || !this.editingEmployee.departmentId) {
       this.snackbar.showError(this.translate.instant('employees.updateRequiredFields'));
+      return;
+    }
+
+    if (!this.editingEmployee.positionId) {
+      this.snackbar.showError(this.translate.instant('employees.positionRequired'));
       return;
     }
 

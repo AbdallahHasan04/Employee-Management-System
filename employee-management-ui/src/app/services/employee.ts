@@ -18,6 +18,8 @@ export interface Employee
     startWorkingDate: string | null;
     departmentId: number;
     departmentName?: string;
+    positionId: number | null;
+    positionName?: string;
     profileImagePath: string | null;
     createdBy: string | null;
     creationDate: string;
@@ -29,7 +31,7 @@ export interface Employee
 export type NewEmployee = Pick<Employee,
   'employeeNo' | 'nameEn' | 'nameAr' | 'username' | 'birthdate' |
   'nationalNo' | 'gender' | 'mobileNumber' | 'email' | 'startWorkingDate'
-> & { departmentId: number | null };
+> & { departmentId: number | null; positionId: number | null };
 
 export interface CreateEmployeeResponse
 {

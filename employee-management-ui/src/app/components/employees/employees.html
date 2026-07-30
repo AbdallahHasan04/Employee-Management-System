@@ -68,6 +68,15 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+          <mat-label>{{ 'employees.position' | translate }}</mat-label>
+          <mat-select [(ngModel)]="newEmployee.positionId">
+            @for (pos of positions; track pos.id) {
+              <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>{{ 'employees.username' | translate }}</mat-label>
           <input matInput [(ngModel)]="newEmployee.username">
         </mat-form-field>
@@ -167,6 +176,15 @@
           <mat-select [(ngModel)]="editingEmployee.departmentId">
             @for (dept of departments; track dept.id) {
               <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'employees.position' | translate }}</mat-label>
+          <mat-select [(ngModel)]="editingEmployee.positionId">
+            @for (pos of positions; track pos.id) {
+              <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -285,6 +303,11 @@
         <ng-container matColumnDef="departmentName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'employees.department' | translate }} </th>
           <td mat-cell *matCellDef="let item"> {{item.departmentName || '—'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="positionName">
+          <th mat-header-cell *matHeaderCellDef> {{ 'employees.position' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.positionName || '—'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="username">

@@ -31,12 +31,14 @@ namespace Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByUsernameAsync(string username)
+        public async Task DeleteByUsernameAsync(string username, string? deletedBy)
         {
             var user = await GetByUsernameAsync(username);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                user.IsDeleted = true;
+                user.ModifiedBy = deletedBy;
+                user.ModificationDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
         }

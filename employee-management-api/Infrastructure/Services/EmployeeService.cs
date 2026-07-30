@@ -10,13 +10,20 @@ namespace Infrastructure.Services
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IEmployeePositionRepository _employeePositionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, IUserRepository userRepository, IUnitOfWork unitOfWork, IFileStorageService fileStorageService)
+        public EmployeeService(
+            IEmployeeRepository employeeRepository,
+            IUserRepository userRepository,
+            IEmployeePositionRepository employeePositionRepository,
+            IUnitOfWork unitOfWork,
+            IFileStorageService fileStorageService)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
+            _employeePositionRepository = employeePositionRepository;
             _unitOfWork = unitOfWork;
             _fileStorageService = fileStorageService;
         }
@@ -24,9 +31,13 @@ namespace Infrastructure.Services
         public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
             var (items, totalCount) = await _employeeRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+
+            var employeeIds = items.Select(e => e.Id).ToList();
+            var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(employeeIds);
+
             return new PagedResultDto<EmployeeDto>
             {
-                Items = items.Select(ToDto).ToList(),
+                Items = items.Select(e => ToDto(e, currentPositions.GetValueOrDefault(e.Id))).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -36,7 +47,13 @@ namespace Infrastructure.Services
         public async Task<EmployeeDto?> GetEmployeeByIdAsync(int id)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
-            return employee == null ? null : ToDto(employee);
+            if (employee == null)
+            {
+                return null;
+            }
+
+            var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(new[] { id });
+            return ToDto(employee, currentPositions.GetValueOrDefault(id));
         }
 
         public async Task<EmployeeDto> CreateEmployeeAsync(EmployeeDto dto, string? createdBy)
@@ -72,15 +89,31 @@ namespace Infrastructure.Services
                     CreatedBy = createdBy,
                     CreationDate = DateTime.UtcNow
                 };
-                await _employeeRepository.AddAsync(employee);
+                await _employeeRepository.AddAsync(employee); // populates employee.Id
 
                 var generatedPassword = PasswordHasher.GenerateFromEmployeeId(employee.Id);
                 user.Password = PasswordHasher.Hash(generatedPassword);
                 await _userRepository.UpdateAsync(user);
 
+                // Position is mandatory at creation (enforced by the frontend)
+                EmployeePosition? initialPosition = null;
+                if (dto.PositionId.HasValue)
+                {
+                    initialPosition = new EmployeePosition
+                    {
+                        EmployeeId = employee.Id,
+                        PositionId = dto.PositionId.Value,
+                        StartDate = dto.StartWorkingDate ?? DateTime.UtcNow.Date,
+                        EndDate = null,
+                        CreatedBy = createdBy,
+                        CreationDate = DateTime.UtcNow
+                    };
+                    await _employeePositionRepository.AddAsync(initialPosition);
+                }
+
                 await _unitOfWork.CommitTransactionAsync();
 
-                var result = ToDto(employee);
+                var result = ToDto(employee, initialPosition);
                 result.GeneratedPassword = generatedPassword;
                 return result;
             }
@@ -99,35 +132,76 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            existing.EmployeeNo = dto.EmployeeNo;
-            existing.NameEn = dto.NameEn;
-            existing.NameAr = dto.NameAr;
-            existing.Birthdate = dto.Birthdate;
-            existing.NationalNo = dto.NationalNo;
-            existing.Gender = dto.Gender;
-            existing.Status = dto.Status;
-            existing.MobileNumber = dto.MobileNumber;
-            existing.Email = dto.Email;
-            existing.StartWorkingDate = dto.StartWorkingDate;
-            existing.DepartmentId = dto.DepartmentId;
-            existing.ModifiedBy = modifiedBy;
-            existing.ModificationDate = DateTime.UtcNow;
-
-            await _employeeRepository.UpdateAsync(existing);
-
-            var user = await _userRepository.GetByUsernameAsync(existing.Username);
-            if (user != null && user.Name != existing.NameEn)
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                user.Name = existing.NameEn;
-                user.ModifiedBy = modifiedBy;
-                user.ModificationDate = DateTime.UtcNow;
-                await _userRepository.UpdateAsync(user);
-            }
+                existing.EmployeeNo = dto.EmployeeNo;
+                existing.NameEn = dto.NameEn;
+                existing.NameAr = dto.NameAr;
+                existing.Birthdate = dto.Birthdate;
+                existing.NationalNo = dto.NationalNo;
+                existing.Gender = dto.Gender;
+                existing.Status = dto.Status;
+                existing.MobileNumber = dto.MobileNumber;
+                existing.Email = dto.Email;
+                existing.StartWorkingDate = dto.StartWorkingDate;
+                existing.DepartmentId = dto.DepartmentId;
+                existing.ModifiedBy = modifiedBy;
+                existing.ModificationDate = DateTime.UtcNow;
 
-            return true;
+                await _employeeRepository.UpdateAsync(existing);
+
+                var user = await _userRepository.GetByUsernameAsync(existing.Username);
+                if (user != null && user.Name != existing.NameEn)
+                {
+                    user.Name = existing.NameEn;
+                    user.ModifiedBy = modifiedBy;
+                    user.ModificationDate = DateTime.UtcNow;
+                    await _userRepository.UpdateAsync(user);
+                }
+
+                // Position change detection: only touch EmployeePositions if the
+                // submitted PositionId actually differs from what's currently open.
+                if (dto.PositionId.HasValue)
+                {
+                    var currentPosition = await _employeePositionRepository.GetCurrentByEmployeeIdAsync(dto.Id);
+
+                    if (currentPosition == null || currentPosition.PositionId != dto.PositionId.Value)
+                    {
+                        var changeDate = DateTime.UtcNow.Date;
+
+                        if (currentPosition != null)
+                        {
+                            currentPosition.EndDate = changeDate;
+                            currentPosition.ModifiedBy = modifiedBy;
+                            currentPosition.ModificationDate = DateTime.UtcNow;
+                            await _employeePositionRepository.UpdateAsync(currentPosition);
+                        }
+
+                        var newPosition = new EmployeePosition
+                        {
+                            EmployeeId = dto.Id,
+                            PositionId = dto.PositionId.Value,
+                            StartDate = changeDate,
+                            EndDate = null,
+                            CreatedBy = modifiedBy,
+                            CreationDate = DateTime.UtcNow
+                        };
+                        await _employeePositionRepository.AddAsync(newPosition);
+                    }
+                }
+
+                await _unitOfWork.CommitTransactionAsync();
+                return true;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
         }
 
-        public async Task<bool> DeleteEmployeeAsync(int id)
+        public async Task<bool> DeleteEmployeeAsync(int id, string? deletedBy)
         {
             var existing = await _employeeRepository.GetByIdAsync(id);
             if (existing == null)
@@ -135,11 +209,30 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            _fileStorageService.DeleteEmployeePhoto(existing.ProfileImagePath);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Close out any currently-open position record but the historical record itself is preserved, not deleted.
+                var currentPosition = await _employeePositionRepository.GetCurrentByEmployeeIdAsync(id);
+                if (currentPosition != null)
+                {
+                    currentPosition.EndDate = DateTime.UtcNow.Date;
+                    currentPosition.ModifiedBy = deletedBy;
+                    currentPosition.ModificationDate = DateTime.UtcNow;
+                    await _employeePositionRepository.UpdateAsync(currentPosition);
+                }
 
-            await _employeeRepository.DeleteAsync(id);
-            await _userRepository.DeleteByUsernameAsync(existing.Username);
-            return true;
+                await _employeeRepository.DeleteAsync(id, deletedBy);
+                await _userRepository.DeleteByUsernameAsync(existing.Username, deletedBy);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return true;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
         }
 
         public async Task<EmployeeDto?> UpdateProfileImageAsync(int id, string relativePath)
@@ -150,13 +243,13 @@ namespace Infrastructure.Services
                 return null;
             }
 
-            // clean up the old photo file, if one existed, so uploads don't pile up orphaned files
             _fileStorageService.DeleteEmployeePhoto(existing.ProfileImagePath);
 
             existing.ProfileImagePath = relativePath;
             await _employeeRepository.UpdateAsync(existing);
 
-            return ToDto(existing);
+            var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(new[] { id });
+            return ToDto(existing, currentPositions.GetValueOrDefault(id));
         }
 
         public async Task<bool> RemoveProfileImageAsync(int id)
@@ -173,7 +266,7 @@ namespace Infrastructure.Services
             return true;
         }
 
-        private static EmployeeDto ToDto(Employee employee)
+        private static EmployeeDto ToDto(Employee employee, EmployeePosition? currentPosition = null)
         {
             return new EmployeeDto
             {
@@ -191,6 +284,8 @@ namespace Infrastructure.Services
                 StartWorkingDate = employee.StartWorkingDate,
                 DepartmentId = employee.DepartmentId,
                 DepartmentName = employee.Department?.NameEn,
+                PositionId = currentPosition?.PositionId,
+                PositionName = currentPosition?.Position?.NameEn,
                 ProfileImagePath = employee.ProfileImagePath,
                 CreatedBy = employee.CreatedBy,
                 CreationDate = employee.CreationDate,

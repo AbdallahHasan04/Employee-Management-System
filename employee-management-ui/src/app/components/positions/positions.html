@@ -1,0 +1,184 @@
+<app-navbar></app-navbar>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'common.eyebrow' | translate }}</p>
+      <h1>{{ 'positions.title' | translate }}</h1>
+    </div>
+  </header>
+
+  <section class="card form-card">
+    @if (!editingPosition) {
+      <h2 class="card-title">{{ 'positions.newTitle' | translate }}</h2>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'positions.nameEn' | translate }}</mat-label>
+          <input matInput [(ngModel)]="newPosition.nameEn">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'positions.nameAr' | translate }}</mat-label>
+          <input matInput [(ngModel)]="newPosition.nameAr">
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" (click)="onAdd()" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>add</mat-icon>
+          }
+          {{ 'positions.addPosition' | translate }}
+        </button>
+      </div>
+
+    } @else {
+      <h2 class="card-title">{{ 'positions.editTitle' | translate }}</h2>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'positions.nameEn' | translate }}</mat-label>
+          <input matInput [(ngModel)]="editingPosition.nameEn">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'positions.nameAr' | translate }}</mat-label>
+          <input matInput [(ngModel)]="editingPosition.nameAr">
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="accent" (click)="onUpdate()" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
+          {{ 'common.saveChanges' | translate }}
+        </button>
+        <button mat-button (click)="editingPosition = null" [disabled]="isSubmitting">{{ 'common.cancel' | translate }}</button>
+      </div>
+    }
+  </section>
+
+  <section class="card table-card">
+    <div class="table-card-header">
+      <h2 class="card-title">{{ 'positions.allPositions' | translate }}</h2>
+      <span class="record-count">{{ totalCount }} {{ (totalCount === 1 ? 'common.record' : 'common.records') | translate }}</span>
+    </div>
+
+    <div class="search-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
+        @if (searchTerm) {
+          <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <span class="search-hint">{{ 'positions.searchHint' | translate }}</span>
+    </div>
+
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <div class="table-scroll">
+      <table mat-table [dataSource]="positions" class="roster-table" multiTemplateDataRows matSort
+             [matSortActive]="sortActive" [matSortDirection]="sortDirection" (matSortChange)="onSortChange($event)">
+
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button (click)="toggleExpand(item); $event.stopPropagation()" aria-label="Toggle details">
+              @if (expandedId === item.id) {
+                <mat-icon>expand_less</mat-icon>
+              } @else {
+                <mat-icon>expand_more</mat-icon>
+              }
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nameEn">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positions.nameEn' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.nameEn}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nameAr">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'positions.nameAr' | translate }} </th>
+          <td mat-cell *matCellDef="let item"> {{item.nameAr}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> {{ 'common.actions' | translate }} </th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button color="primary" (click)="onEdit(item); $event.stopPropagation()" [disabled]="deletingId === item.id" aria-label="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(item); $event.stopPropagation()" [disabled]="deletingId === item.id" aria-label="Delete">
+              @if (deletingId === item.id) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>delete</mat-icon>
+              }
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let item" [attr.colspan]="displayedColumns.length" class="detail-cell">
+            <div class="detail-row-content" [class.expanded]="expandedId === item.id">
+              <div class="detail-grid">
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.createdBy' | translate }}</span>
+                  <span class="detail-value">{{ item.createdBy || '—' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.creationDate' | translate }}</span>
+                  <span class="detail-value">{{ item.creationDate | date:'medium' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.modifiedBy' | translate }}</span>
+                  <span class="detail-value">{{ item.modifiedBy || '—' }}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">{{ 'common.modificationDate' | translate }}</span>
+                  <span class="detail-value">{{ item.modificationDate ? (item.modificationDate | date:'medium') : '—' }}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" (click)="toggleExpand(row)"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+      </table>
+    </div>
+
+    @if (!isLoading && positions.length === 0 && !searchTerm) {
+      <div class="empty-state">
+        <mat-icon>work_off</mat-icon>
+        <p>{{ 'positions.noPositions' | translate }}</p>
+      </div>
+    }
+
+    @if (!isLoading && positions.length === 0 && searchTerm) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'positions.noResults' | translate }}</p>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>

@@ -15,6 +15,6 @@ namespace Common.IServices
         Task<DepartmentDto?> GetDepartmentByIdAsync(int id);
         Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto departmentDto, string? createdBy);
         Task<bool> UpdateDepartmentAsync(DepartmentDto departmentDto, string? modifiedBy);
-        Task<DepartmentDeleteResult> DeleteDepartmentAsync(int id);
+        Task<DepartmentDeleteResult> DeleteDepartmentAsync(int id, string? deletedBy);
     }
 }

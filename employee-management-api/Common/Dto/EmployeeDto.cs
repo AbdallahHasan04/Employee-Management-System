@@ -16,11 +16,13 @@
         public DateTime? StartWorkingDate { get; set; }
         public int DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
+        public int? PositionId { get; set; }
+        public string? PositionName { get; set; }
+        public string? ProfileImagePath { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string? ModifiedBy { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? GeneratedPassword { get; set; }
-        public string? ProfileImagePath { get; set; }
     }
 }
