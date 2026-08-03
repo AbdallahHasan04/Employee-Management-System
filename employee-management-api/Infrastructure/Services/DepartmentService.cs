@@ -1,4 +1,5 @@
-﻿using Common.Dto;
+﻿using AutoMapper;
+using Common.Dto;
 using Common.IRepository;
 using Common.IServices;
 using Core.Entities;
@@ -9,11 +10,13 @@ namespace Infrastructure.Services
     {
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IMapper _mapper;
 
-        public DepartmentService(IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository, IMapper mapper)
         {
             _departmentRepository = departmentRepository;
             _employeeRepository = employeeRepository;
+            _mapper = mapper;
         }
 
         public async Task<PagedResultDto<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
@@ -25,7 +28,7 @@ namespace Infrastructure.Services
 
             return new PagedResultDto<DepartmentDto>
             {
-                Items = items.Select(d => ToDto(d, counts.GetValueOrDefault(d.Id, 0))).ToList(),
+                Items = items.Select(d => MapToDto(d, counts.GetValueOrDefault(d.Id, 0))).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -41,24 +44,17 @@ namespace Infrastructure.Services
             }
 
             var count = await _employeeRepository.GetEmployeeCountsForDepartmentIdsAsync(new[] { id });
-            return ToDto(department, count.GetValueOrDefault(id, 0));
+            return MapToDto(department, count.GetValueOrDefault(id, 0));
         }
 
         public async Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto dto, string? createdBy)
         {
-            var department = new Department
-            {
-                DepartmentCode = dto.DepartmentCode,
-                NameEn = dto.NameEn,
-                NameAr = dto.NameAr,
-                Description = dto.Description,
-                Status = string.IsNullOrWhiteSpace(dto.Status) ? "Active" : dto.Status,
-                CreatedBy = createdBy,
-                CreationDate = DateTime.UtcNow
-            };
+            var department = _mapper.Map<Department>(dto);
+            department.CreatedBy = createdBy;
+            department.CreationDate = DateTime.UtcNow;
 
             await _departmentRepository.AddAsync(department);
-            return ToDto(department, 0);
+            return MapToDto(department, 0);
         }
 
         public async Task<bool> UpdateDepartmentAsync(DepartmentDto dto, string? modifiedBy)
@@ -69,11 +65,7 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            existing.DepartmentCode = dto.DepartmentCode;
-            existing.NameEn = dto.NameEn;
-            existing.NameAr = dto.NameAr;
-            existing.Description = dto.Description;
-            existing.Status = dto.Status;
+            _mapper.Map(dto, existing);
             existing.ModifiedBy = modifiedBy;
             existing.ModificationDate = DateTime.UtcNow;
 
@@ -99,22 +91,11 @@ namespace Infrastructure.Services
             return DepartmentDeleteResult.Success;
         }
 
-        private static DepartmentDto ToDto(Department department, int employeeCount)
+        private DepartmentDto MapToDto(Department department, int employeeCount)
         {
-            return new DepartmentDto
-            {
-                Id = department.Id,
-                DepartmentCode = department.DepartmentCode,
-                NameEn = department.NameEn,
-                NameAr = department.NameAr,
-                Description = department.Description,
-                Status = department.Status,
-                EmployeeCount = employeeCount,
-                CreatedBy = department.CreatedBy,
-                CreationDate = department.CreationDate,
-                ModifiedBy = department.ModifiedBy,
-                ModificationDate = department.ModificationDate
-            };
+            var dto = _mapper.Map<DepartmentDto>(department);
+            dto.EmployeeCount = employeeCount;
+            return dto;
         }
     }
 }

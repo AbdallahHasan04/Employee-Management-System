@@ -1,4 +1,5 @@
-﻿using Common.Dto;
+﻿using AutoMapper;
+using Common.Dto;
 using Common.IRepository;
 using Common.IServices;
 using Core.Entities;
@@ -9,11 +10,13 @@ namespace Infrastructure.Services
     {
         private readonly IEmployeePositionRepository _employeePositionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public EmployeePositionService(IEmployeePositionRepository employeePositionRepository, IUnitOfWork unitOfWork)
+        public EmployeePositionService(IEmployeePositionRepository employeePositionRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _employeePositionRepository = employeePositionRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<PagedResultDto<EmployeePositionDto>> GetHistoryAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
@@ -21,7 +24,7 @@ namespace Infrastructure.Services
             var (items, totalCount) = await _employeePositionRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
             return new PagedResultDto<EmployeePositionDto>
             {
-                Items = items.Select(ToDto).ToList(),
+                Items = items.Select(ep => _mapper.Map<EmployeePositionDto>(ep)).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -43,43 +46,19 @@ namespace Infrastructure.Services
                     await _employeePositionRepository.UpdateAsync(current);
                 }
 
-                var newRecord = new EmployeePosition
-                {
-                    EmployeeId = dto.EmployeeId,
-                    PositionId = dto.PositionId,
-                    StartDate = dto.StartDate,
-                    EndDate = null,
-                    CreatedBy = createdBy,
-                    CreationDate = DateTime.UtcNow
-                };
+                var newRecord = _mapper.Map<EmployeePosition>(dto);
+                newRecord.CreatedBy = createdBy;
+                newRecord.CreationDate = DateTime.UtcNow;
                 await _employeePositionRepository.AddAsync(newRecord);
 
                 await _unitOfWork.CommitTransactionAsync();
-                return ToDto(newRecord);
+                return _mapper.Map<EmployeePositionDto>(newRecord);
             }
             catch
             {
                 await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
-        }
-
-        private static EmployeePositionDto ToDto(EmployeePosition ep)
-        {
-            return new EmployeePositionDto
-            {
-                Id = ep.Id,
-                EmployeeId = ep.EmployeeId,
-                EmployeeName = ep.Employee?.NameEn,
-                PositionId = ep.PositionId,
-                PositionName = ep.Position?.NameEn,
-                StartDate = ep.StartDate,
-                EndDate = ep.EndDate,
-                CreatedBy = ep.CreatedBy,
-                CreationDate = ep.CreationDate,
-                ModifiedBy = ep.ModifiedBy,
-                ModificationDate = ep.ModificationDate
-            };
         }
     }
 }

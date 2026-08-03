@@ -1,4 +1,5 @@
-﻿using Common.Dto;
+﻿using AutoMapper;
+using Common.Dto;
 using Common.IRepository;
 using Common.IServices;
 using Core.Entities;
@@ -13,19 +14,22 @@ namespace Infrastructure.Services
         private readonly IEmployeePositionRepository _employeePositionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IMapper _mapper;
 
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IUserRepository userRepository,
             IEmployeePositionRepository employeePositionRepository,
             IUnitOfWork unitOfWork,
-            IFileStorageService fileStorageService)
+            IFileStorageService fileStorageService,
+            IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _employeePositionRepository = employeePositionRepository;
             _unitOfWork = unitOfWork;
             _fileStorageService = fileStorageService;
+            _mapper = mapper;
         }
 
         public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
@@ -37,7 +41,7 @@ namespace Infrastructure.Services
 
             return new PagedResultDto<EmployeeDto>
             {
-                Items = items.Select(e => ToDto(e, currentPositions.GetValueOrDefault(e.Id))).ToList(),
+                Items = items.Select(e => MapToDto(e, currentPositions.GetValueOrDefault(e.Id))).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -53,7 +57,7 @@ namespace Infrastructure.Services
             }
 
             var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(new[] { id });
-            return ToDto(employee, currentPositions.GetValueOrDefault(id));
+            return MapToDto(employee, currentPositions.GetValueOrDefault(id));
         }
 
         public async Task<EmployeeDto> CreateEmployeeAsync(EmployeeDto dto, string? createdBy)
@@ -61,41 +65,22 @@ namespace Infrastructure.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                var user = new User
-                {
-                    Username = dto.Username,
-                    Name = dto.NameEn,
-                    Password = PasswordHasher.Hash(Guid.NewGuid().ToString("N")),
-                    Status = "Active",
-                    CreatedBy = createdBy,
-                    CreationDate = DateTime.UtcNow
-                };
+                var user = _mapper.Map<User>(dto);
+                user.Password = PasswordHasher.Hash(Guid.NewGuid().ToString("N")); // temp password until employee.Id exists
+                user.CreatedBy = createdBy;
+                user.CreationDate = DateTime.UtcNow;
                 await _userRepository.AddAsync(user);
 
-                var employee = new Employee
-                {
-                    EmployeeNo = dto.EmployeeNo,
-                    NameEn = dto.NameEn,
-                    NameAr = dto.NameAr,
-                    Username = dto.Username,
-                    Birthdate = dto.Birthdate,
-                    NationalNo = dto.NationalNo,
-                    Gender = dto.Gender,
-                    Status = string.IsNullOrWhiteSpace(dto.Status) ? "Active" : dto.Status,
-                    MobileNumber = dto.MobileNumber,
-                    Email = dto.Email,
-                    StartWorkingDate = dto.StartWorkingDate,
-                    DepartmentId = dto.DepartmentId,
-                    CreatedBy = createdBy,
-                    CreationDate = DateTime.UtcNow
-                };
+                var employee = _mapper.Map<Employee>(dto);
+                employee.Username = dto.Username; // ignored by the profile to protect immutability on update, set here
+                employee.CreatedBy = createdBy;
+                employee.CreationDate = DateTime.UtcNow;
                 await _employeeRepository.AddAsync(employee); // populates employee.Id
 
                 var generatedPassword = PasswordHasher.GenerateFromEmployeeId(employee.Id);
                 user.Password = PasswordHasher.Hash(generatedPassword);
                 await _userRepository.UpdateAsync(user);
 
-                // Position is mandatory at creation (enforced by the frontend)
                 EmployeePosition? initialPosition = null;
                 if (dto.PositionId.HasValue)
                 {
@@ -113,7 +98,7 @@ namespace Infrastructure.Services
 
                 await _unitOfWork.CommitTransactionAsync();
 
-                var result = ToDto(employee, initialPosition);
+                var result = MapToDto(employee, initialPosition);
                 result.GeneratedPassword = generatedPassword;
                 return result;
             }
@@ -135,17 +120,7 @@ namespace Infrastructure.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                existing.EmployeeNo = dto.EmployeeNo;
-                existing.NameEn = dto.NameEn;
-                existing.NameAr = dto.NameAr;
-                existing.Birthdate = dto.Birthdate;
-                existing.NationalNo = dto.NationalNo;
-                existing.Gender = dto.Gender;
-                existing.Status = dto.Status;
-                existing.MobileNumber = dto.MobileNumber;
-                existing.Email = dto.Email;
-                existing.StartWorkingDate = dto.StartWorkingDate;
-                existing.DepartmentId = dto.DepartmentId;
+                _mapper.Map(dto, existing);
                 existing.ModifiedBy = modifiedBy;
                 existing.ModificationDate = DateTime.UtcNow;
 
@@ -178,15 +153,10 @@ namespace Infrastructure.Services
                             await _employeePositionRepository.UpdateAsync(currentPosition);
                         }
 
-                        var newPosition = new EmployeePosition
-                        {
-                            EmployeeId = dto.Id,
-                            PositionId = dto.PositionId.Value,
-                            StartDate = changeDate,
-                            EndDate = null,
-                            CreatedBy = modifiedBy,
-                            CreationDate = DateTime.UtcNow
-                        };
+                        var newPosition = _mapper.Map<EmployeePosition>(dto);
+                        newPosition.StartDate = changeDate;
+                        newPosition.CreatedBy = modifiedBy;
+                        newPosition.CreationDate = DateTime.UtcNow;
                         await _employeePositionRepository.AddAsync(newPosition);
                     }
                 }
@@ -212,7 +182,6 @@ namespace Infrastructure.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Close out any currently-open position record but the historical record itself is preserved, not deleted.
                 var currentPosition = await _employeePositionRepository.GetCurrentByEmployeeIdAsync(id);
                 if (currentPosition != null)
                 {
@@ -249,7 +218,7 @@ namespace Infrastructure.Services
             await _employeeRepository.UpdateAsync(existing);
 
             var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(new[] { id });
-            return ToDto(existing, currentPositions.GetValueOrDefault(id));
+            return MapToDto(existing, currentPositions.GetValueOrDefault(id));
         }
 
         public async Task<bool> RemoveProfileImageAsync(int id)
@@ -266,32 +235,12 @@ namespace Infrastructure.Services
             return true;
         }
 
-        private static EmployeeDto ToDto(Employee employee, EmployeePosition? currentPosition = null)
+        private EmployeeDto MapToDto(Employee employee, EmployeePosition? currentPosition = null)
         {
-            return new EmployeeDto
-            {
-                Id = employee.Id,
-                EmployeeNo = employee.EmployeeNo,
-                NameEn = employee.NameEn,
-                NameAr = employee.NameAr,
-                Username = employee.Username,
-                Birthdate = employee.Birthdate,
-                NationalNo = employee.NationalNo,
-                Gender = employee.Gender,
-                Status = employee.Status,
-                MobileNumber = employee.MobileNumber,
-                Email = employee.Email,
-                StartWorkingDate = employee.StartWorkingDate,
-                DepartmentId = employee.DepartmentId,
-                DepartmentName = employee.Department?.NameEn,
-                PositionId = currentPosition?.PositionId,
-                PositionName = currentPosition?.Position?.NameEn,
-                ProfileImagePath = employee.ProfileImagePath,
-                CreatedBy = employee.CreatedBy,
-                CreationDate = employee.CreationDate,
-                ModifiedBy = employee.ModifiedBy,
-                ModificationDate = employee.ModificationDate
-            };
+            var dto = _mapper.Map<EmployeeDto>(employee);
+            dto.PositionId = currentPosition?.PositionId;
+            dto.PositionName = currentPosition?.Position?.NameEn;
+            return dto;
         }
     }
 }

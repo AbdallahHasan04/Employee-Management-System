@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "employee-management-api/1.0.0": {
         "dependencies": {
+          "AutoMapper": "16.2.0",
           "Common": "1.0.0",
           "Core": "1.0.0",
           "Data": "1.0.0",
@@ -20,6 +21,17 @@
         },
         "runtime": {
           "employee-management-api.dll": {}
+        }
+      },
+      "AutoMapper/16.2.0": {
+        "dependencies": {
+          "Microsoft.IdentityModel.JsonWebTokens": "8.19.2"
+        },
+        "runtime": {
+          "lib/net10.0/AutoMapper.dll": {
+            "assemblyVersion": "16.0.0.0",
+            "fileVersion": "16.2.0.0"
+          }
         }
       },
       "Humanizer.Core/2.14.1": {
@@ -656,6 +668,7 @@
       },
       "Infrastructure/1.0.0": {
         "dependencies": {
+          "AutoMapper": "16.2.0",
           "Common": "1.0.0",
           "Core": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "8.19.2"
@@ -674,6 +687,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AutoMapper/16.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PE8HgPc5BZJnAFwjvDTE72gWL6YrYib+V7+vxtLXDYz0CH/fFgbVcwLUC9UHk5ALwspZ6Vbmoo6PHvseIk/0ZA==",
+      "path": "automapper/16.2.0",
+      "hashPath": "automapper.16.2.0.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",

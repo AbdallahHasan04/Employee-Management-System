@@ -2,9 +2,11 @@ using Common.IRepository;
 using Common.IServices;
 using Data.Context;
 using Data.Repository;
+using Infrastructure.Mapping;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -31,6 +33,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddMaps(typeof(AutoMapperProfile).Assembly);
+}, typeof(AutoMapperProfile));
 
 builder.Services.AddSwaggerGen(c =>
 {

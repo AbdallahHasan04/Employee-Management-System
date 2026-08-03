@@ -1,4 +1,5 @@
-﻿using Common.Dto;
+﻿using AutoMapper;
+using Common.Dto;
 using Common.IRepository;
 using Common.IServices;
 using Core.Entities;
@@ -9,11 +10,13 @@ namespace Infrastructure.Services
     {
         private readonly IPositionRepository _positionRepository;
         private readonly IEmployeePositionRepository _employeePositionRepository;
+        private readonly IMapper _mapper;
 
-        public PositionService(IPositionRepository positionRepository, IEmployeePositionRepository employeePositionRepository)
+        public PositionService(IPositionRepository positionRepository, IEmployeePositionRepository employeePositionRepository, IMapper mapper)
         {
             _positionRepository = positionRepository;
             _employeePositionRepository = employeePositionRepository;
+            _mapper = mapper;
         }
 
         public async Task<PagedResultDto<PositionDto>> GetAllPositionsAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
@@ -21,7 +24,7 @@ namespace Infrastructure.Services
             var (items, totalCount) = await _positionRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
             return new PagedResultDto<PositionDto>
             {
-                Items = items.Select(ToDto).ToList(),
+                Items = items.Select(p => _mapper.Map<PositionDto>(p)).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -31,21 +34,17 @@ namespace Infrastructure.Services
         public async Task<PositionDto?> GetPositionByIdAsync(int id)
         {
             var position = await _positionRepository.GetByIdAsync(id);
-            return position == null ? null : ToDto(position);
+            return position == null ? null : _mapper.Map<PositionDto>(position);
         }
 
         public async Task<PositionDto> CreatePositionAsync(PositionDto dto, string? createdBy)
         {
-            var position = new Position
-            {
-                NameEn = dto.NameEn,
-                NameAr = dto.NameAr,
-                CreatedBy = createdBy,
-                CreationDate = DateTime.UtcNow
-            };
+            var position = _mapper.Map<Position>(dto);
+            position.CreatedBy = createdBy;
+            position.CreationDate = DateTime.UtcNow;
 
             await _positionRepository.AddAsync(position);
-            return ToDto(position);
+            return _mapper.Map<PositionDto>(position);
         }
 
         public async Task<bool> UpdatePositionAsync(PositionDto dto, string? modifiedBy)
@@ -56,8 +55,7 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            existing.NameEn = dto.NameEn;
-            existing.NameAr = dto.NameAr;
+            _mapper.Map(dto, existing);
             existing.ModifiedBy = modifiedBy;
             existing.ModificationDate = DateTime.UtcNow;
 
@@ -81,20 +79,6 @@ namespace Infrastructure.Services
 
             await _positionRepository.DeleteAsync(id, deletedBy);
             return PositionDeleteResult.Success;
-        }
-
-        private static PositionDto ToDto(Position position)
-        {
-            return new PositionDto
-            {
-                Id = position.Id,
-                NameEn = position.NameEn,
-                NameAr = position.NameAr,
-                CreatedBy = position.CreatedBy,
-                CreationDate = position.CreationDate,
-                ModifiedBy = position.ModifiedBy,
-                ModificationDate = position.ModificationDate
-            };
         }
     }
 }
