@@ -6,6 +6,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 export interface ConfirmDialogData {
   title: string;
   message: string;
+  confirmLabel?: string;
+  confirmColor?: 'primary' | 'accent' | 'warn';
 }
 
 @Component({

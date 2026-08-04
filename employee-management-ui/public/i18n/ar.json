@@ -20,7 +20,11 @@
     "nextPage": "الصفحة التالية",
     "previousPage": "الصفحة السابقة",
     "firstPage": "الصفحة الأولى",
-    "lastPage": "الصفحة الأخيرة"
+    "lastPage": "الصفحة الأخيرة",
+    "discardChangesTitle": "تجاهل التغييرات؟",
+    "discardChangesMessage": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟",
+    "discardChanges": "تجاهل",
+    "fieldRequired": "هذا الحقل مطلوب."
   },
   "nav": {
     "brand": "إدارة الموظفين",
@@ -146,7 +150,8 @@
     "addSuccess": "تمت إضافة المنصب بنجاح!",
     "updateSuccess": "تم تحديث المنصب بنجاح!",
     "deleteSuccess": "تم حذف المنصب بنجاح!",
-    "searchHint": "البحث حسب: الاسم"
+    "searchHint": "البحث حسب: الاسم",
+    "employeeCount": "عدد الموظفين"
   },
   "positionHistory": {
     "title": "سجل المناصب",

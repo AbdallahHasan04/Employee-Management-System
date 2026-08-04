@@ -7,6 +7,7 @@ export interface Position
     id: number;
     nameEn: string;
     nameAr: string;
+    employeeCount: number;
     createdBy: string | null;
     creationDate: string;
     modifiedBy: string | null;

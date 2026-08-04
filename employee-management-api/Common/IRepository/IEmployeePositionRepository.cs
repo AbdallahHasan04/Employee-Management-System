@@ -8,6 +8,7 @@ namespace Common.IRepository
         Task<bool> ExistsByPositionIdAsync(int positionId);
         Task<EmployeePosition?> GetCurrentByEmployeeIdAsync(int employeeId);
         Task<Dictionary<int, EmployeePosition>> GetCurrentPositionsForEmployeeIdsAsync(IEnumerable<int> employeeIds);
+        Task<Dictionary<int, int>> GetCurrentEmployeeCountsForPositionIdsAsync(IEnumerable<int> positionIds);
         Task AddAsync(EmployeePosition employeePosition);
         Task UpdateAsync(EmployeePosition employeePosition);
     }

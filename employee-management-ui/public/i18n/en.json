@@ -20,7 +20,11 @@
     "nextPage": "Next page",
     "previousPage": "Previous page",
     "firstPage": "First page",
-    "lastPage": "Last page"
+    "lastPage": "Last page",
+    "discardChangesTitle": "Discard Changes?",
+    "discardChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
+    "discardChanges": "Discard",
+    "fieldRequired": "This field is required."
   },
   "nav": {
     "brand": "Employee Management",
@@ -143,7 +147,8 @@
     "addSuccess": "Position added successfully!",
     "updateSuccess": "Position updated successfully!",
     "deleteSuccess": "Position deleted successfully!",
-    "searchHint": "Search by: Name"
+    "searchHint": "Search by: Name",
+    "employeeCount": "Employees"
   },
   "positionHistory": {
     "title": "Position History",

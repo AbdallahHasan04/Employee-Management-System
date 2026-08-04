@@ -227,7 +227,7 @@
           }
           {{ 'common.saveChanges' | translate }}
         </button>
-        <button mat-button (click)="editingEmployee = null" [disabled]="isSubmitting">{{ 'common.cancel' | translate }}</button>
+        <button mat-button (click)="onCancelEdit()" [disabled]="isSubmitting">{{ 'common.cancel' | translate }}</button>
       </div>
     }
   </section>

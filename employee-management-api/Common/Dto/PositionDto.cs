@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string NameEn { get; set; } = string.Empty;
         public string NameAr { get; set; } = string.Empty;
+        public int EmployeeCount { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string? ModifiedBy { get; set; }

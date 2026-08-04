@@ -45,6 +45,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy
 
   newDepartment: NewDepartment = this.emptyNewDepartment();
   editingDepartment: Department | null = null;
+  private originalEditingDepartment: Department | null = null;
 
   isSubmitting = false;
   deletingId: number | null = null;
@@ -159,6 +160,33 @@ export class DepartmentsComponent implements OnInit, OnDestroy
   onEdit(department: Department)
   {
     this.editingDepartment = { ...department };
+    this.originalEditingDepartment = { ...department };
+  }
+
+  onCancelEdit(): void
+  {
+    if (!this.editingDepartment) return;
+
+    const hasChanges = JSON.stringify(this.editingDepartment) !== JSON.stringify(this.originalEditingDepartment);
+    if (!hasChanges) {
+      this.editingDepartment = null;
+      return;
+    }
+
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('common.discardChangesTitle'),
+        message: this.translate.instant('common.discardChangesMessage'),
+        confirmLabel: this.translate.instant('common.discardChanges')
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.editingDepartment = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onUpdate()

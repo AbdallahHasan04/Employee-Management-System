@@ -40,10 +40,11 @@ export class PositionsComponent implements OnInit, OnDestroy
   private snackbar = inject(SnackbarService);
 
   positions: Position[] = [];
-  displayedColumns: string[] = ['expand', 'nameEn', 'nameAr', 'actions'];
+  displayedColumns: string[] = ['expand', 'nameEn', 'nameAr', 'employeeCount', 'actions'];
 
   newPosition: NewPosition = this.emptyNewPosition();
   editingPosition: Position | null = null;
+  private originalEditingPosition: Position | null = null;
 
   isSubmitting = false;
   deletingId: number | null = null;
@@ -157,6 +158,33 @@ export class PositionsComponent implements OnInit, OnDestroy
   onEdit(position: Position)
   {
     this.editingPosition = { ...position };
+    this.originalEditingPosition = { ...position };
+  }
+
+  onCancelEdit(): void
+  {
+    if (!this.editingPosition) return;
+
+    const hasChanges = JSON.stringify(this.editingPosition) !== JSON.stringify(this.originalEditingPosition);
+    if (!hasChanges) {
+      this.editingPosition = null;
+      return;
+    }
+
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('common.discardChangesTitle'),
+        message: this.translate.instant('common.discardChangesMessage'),
+        confirmLabel: this.translate.instant('common.discardChanges')
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.editingPosition = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onUpdate()

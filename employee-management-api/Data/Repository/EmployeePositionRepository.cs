@@ -71,6 +71,15 @@ namespace Data.Repository
                 .ToDictionaryAsync(ep => ep.EmployeeId);
         }
 
+        public async Task<Dictionary<int, int>> GetCurrentEmployeeCountsForPositionIdsAsync(IEnumerable<int> positionIds)
+        {
+            return await _context.EmployeePositions
+                .Where(ep => positionIds.Contains(ep.PositionId) && ep.EndDate == null)
+                .GroupBy(ep => ep.PositionId)
+                .Select(g => new { PositionId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.PositionId, x => x.Count);
+        }
+
         public async Task AddAsync(EmployeePosition employeePosition)
         {
             _context.EmployeePositions.Add(employeePosition);

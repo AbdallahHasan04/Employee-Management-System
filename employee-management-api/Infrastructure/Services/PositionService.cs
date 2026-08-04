@@ -22,9 +22,13 @@ namespace Infrastructure.Services
         public async Task<PagedResultDto<PositionDto>> GetAllPositionsAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
             var (items, totalCount) = await _positionRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+
+            var positionIds = items.Select(p => p.Id).ToList();
+            var counts = await _employeePositionRepository.GetCurrentEmployeeCountsForPositionIdsAsync(positionIds);
+
             return new PagedResultDto<PositionDto>
             {
-                Items = items.Select(p => _mapper.Map<PositionDto>(p)).ToList(),
+                Items = items.Select(p => MapToDto(p, counts.GetValueOrDefault(p.Id, 0))).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -34,7 +38,13 @@ namespace Infrastructure.Services
         public async Task<PositionDto?> GetPositionByIdAsync(int id)
         {
             var position = await _positionRepository.GetByIdAsync(id);
-            return position == null ? null : _mapper.Map<PositionDto>(position);
+            if (position == null)
+            {
+                return null;
+            }
+
+            var counts = await _employeePositionRepository.GetCurrentEmployeeCountsForPositionIdsAsync(new[] { id });
+            return MapToDto(position, counts.GetValueOrDefault(id, 0));
         }
 
         public async Task<PositionDto> CreatePositionAsync(PositionDto dto, string? createdBy)
@@ -44,7 +54,7 @@ namespace Infrastructure.Services
             position.CreationDate = DateTime.UtcNow;
 
             await _positionRepository.AddAsync(position);
-            return _mapper.Map<PositionDto>(position);
+            return MapToDto(position, 0);
         }
 
         public async Task<bool> UpdatePositionAsync(PositionDto dto, string? modifiedBy)
@@ -79,6 +89,13 @@ namespace Infrastructure.Services
 
             await _positionRepository.DeleteAsync(id, deletedBy);
             return PositionDeleteResult.Success;
+        }
+
+        private PositionDto MapToDto(Position position, int employeeCount)
+        {
+            var dto = _mapper.Map<PositionDto>(position);
+            dto.EmployeeCount = employeeCount;
+            return dto;
         }
     }
 }

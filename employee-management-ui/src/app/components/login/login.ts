@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
@@ -24,6 +25,7 @@ const LOCKOUT_STORAGE_KEY = 'login_lockout_until';
   MatFormFieldModule, 
   MatInputModule, 
   MatButtonModule,
+  MatIconModule,
   MatProgressSpinnerModule,
   TranslatePipe,
   LanguageSwitcherComponent
@@ -44,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy
   loginform : FormGroup;
   errormessage = '';
   isSubmitting = false;
+  hidePassword = true;
 
   isLockedOut = false;
   lockoutRemainingSeconds = 0;
@@ -78,6 +81,11 @@ export class LoginComponent implements OnInit, OnDestroy
     const minutes = Math.floor(this.lockoutRemainingSeconds / 60);
     const seconds = this.lockoutRemainingSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  togglePasswordVisibility(): void
+  {
+    this.hidePassword = !this.hidePassword;
   }
 
   onSubmit()

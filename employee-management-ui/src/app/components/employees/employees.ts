@@ -57,6 +57,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
 
   newEmployee: NewEmployee = this.emptyNewEmployee();
   editingEmployee: Employee | null = null;
+  private originalEditingEmployee: Employee | null = null;
 
   lastCreatedUsername: string | null = null;
   lastGeneratedPassword: string | null = null;
@@ -349,6 +350,33 @@ export class EmployeesComponent implements OnInit, OnDestroy
   onEdit(employee: Employee)
   {
     this.editingEmployee = { ...employee };
+    this.originalEditingEmployee = { ...employee };
+  }
+
+  onCancelEdit(): void
+  {
+    if (!this.editingEmployee) return;
+
+    const hasChanges = JSON.stringify(this.editingEmployee) !== JSON.stringify(this.originalEditingEmployee);
+    if (!hasChanges) {
+      this.editingEmployee = null;
+      return;
+    }
+
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('common.discardChangesTitle'),
+        message: this.translate.instant('common.discardChangesMessage'),
+        confirmLabel: this.translate.instant('common.discardChanges')
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.editingEmployee = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onUpdate()

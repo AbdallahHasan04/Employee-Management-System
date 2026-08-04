@@ -34,7 +34,7 @@ namespace Infrastructure.Mapping
 
             // Department
             CreateMap<Department, DepartmentDto>();
-
+             
             CreateMap<DepartmentDto, Department>()
                 .ForMember(d => d.Status, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.Status) ? "Active" : s.Status))
                 .ForMember(d => d.CreatedBy, o => o.Ignore())

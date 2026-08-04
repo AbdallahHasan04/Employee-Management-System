@@ -54,6 +54,22 @@ namespace Data.Repository
 
             var totalCount = await query.CountAsync();
 
+            if (sortBy == "employeeCount")
+            {
+                var countsQuery = query.Select(p => new
+                {
+                    Position = p,
+                    Count = _context.EmployeePositions.Count(ep => ep.PositionId == p.Id && ep.EndDate == null)
+                });
+
+                countsQuery = sortDescending
+                    ? countsQuery.OrderByDescending(x => x.Count)
+                    : countsQuery.OrderBy(x => x.Count);
+
+                var pagedWithCount = await countsQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                return (pagedWithCount.Select(x => x.Position).ToList(), totalCount);
+            }
+
             query = sortBy switch
             {
                 "nameEn" => sortDescending ? query.OrderByDescending(p => p.NameEn) : query.OrderBy(p => p.NameEn),
