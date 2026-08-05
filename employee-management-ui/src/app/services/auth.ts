@@ -27,6 +27,11 @@ export class AuthService
         );
     }
 
+    changePassword(payload: { currentPassword: string; newPassword: string }): Observable<any>
+    {
+        return this.http.post(`${this.apiUrl}/change-password`, payload);
+    }
+
     getToken(): string | null
     {
         return localStorage.getItem('jwt_token');

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LanguageService } from '../../services/language';
 
 const MAX_PHOTO_SIZE_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -45,6 +46,8 @@ export class EmployeesComponent implements OnInit, OnDestroy
   private translate = inject(TranslateService);
   private dialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
+  private viewContainerRef = inject(ViewContainerRef);
+  private languageService = inject(LanguageService);
 
   employees: Employee[] = [];
   departments: Department[] = [];
@@ -364,6 +367,8 @@ export class EmployeesComponent implements OnInit, OnDestroy
     }
 
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      viewContainerRef: this.viewContainerRef,
+      direction: this.languageService.dir(),
       data: {
         title: this.translate.instant('common.discardChangesTitle'),
         message: this.translate.instant('common.discardChangesMessage'),
@@ -413,9 +418,11 @@ export class EmployeesComponent implements OnInit, OnDestroy
     });
   }
 
-  onDelete(employee: Employee): void
+ onDelete(employee: Employee): void
   {
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      viewContainerRef: this.viewContainerRef,
+      direction: this.languageService.dir(),
       data: {
         title: this.translate.instant('common.confirmDeleteTitle'),
         message: this.translate.instant('common.confirmDeleteMessage', { name: employee.nameEn })

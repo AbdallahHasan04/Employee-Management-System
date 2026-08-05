@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,7 @@ import { NavbarComponent } from '../navbar/navbar';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
 import { SnackbarService } from '../../services/snackbar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-
+import { LanguageService } from '../../services/language';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -38,6 +38,8 @@ export class PositionsComponent implements OnInit, OnDestroy
   private translate = inject(TranslateService);
   private dialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
+  private viewContainerRef = inject(ViewContainerRef);
+  private languageService = inject(LanguageService);
 
   positions: Position[] = [];
   displayedColumns: string[] = ['expand', 'nameEn', 'nameAr', 'employeeCount', 'actions'];
@@ -172,6 +174,8 @@ export class PositionsComponent implements OnInit, OnDestroy
     }
 
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      viewContainerRef: this.viewContainerRef,
+      direction: this.languageService.dir(),
       data: {
         title: this.translate.instant('common.discardChangesTitle'),
         message: this.translate.instant('common.discardChangesMessage'),
@@ -219,6 +223,8 @@ export class PositionsComponent implements OnInit, OnDestroy
   onDelete(position: Position): void
   {
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      viewContainerRef: this.viewContainerRef,
+      direction: this.languageService.dir(),
       data: {
         title: this.translate.instant('common.confirmDeleteTitle'),
         message: this.translate.instant('common.confirmDeleteMessage', { name: position.nameEn })

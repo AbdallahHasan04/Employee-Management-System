@@ -54,6 +54,27 @@ namespace Infrastructure.Services
             return new AuthResultDto { Success = true, Token = token, ExpiresAt = expiresAt };
         }
 
+        public async Task<ChangePasswordResult> ChangePasswordAsync(string username, ChangePasswordDto dto)
+        {
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null)
+            {
+                return ChangePasswordResult.UserNotFound;
+            }
+
+            if (!PasswordHasher.Verify(dto.CurrentPassword, user.Password))
+            {
+                return ChangePasswordResult.InvalidCurrentPassword;
+            }
+
+            user.Password = PasswordHasher.Hash(dto.NewPassword);
+            user.ModifiedBy = username;
+            user.ModificationDate = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
+
+            return ChangePasswordResult.Success;
+        }
+
         private static string GenerateJwtToken(string username, DateTime expiresAt, IConfigurationSection jwtSettings)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));

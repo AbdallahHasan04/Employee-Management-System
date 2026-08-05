@@ -31,6 +31,7 @@
     "employees": "الموظفون",
     "departments": "الأقسام",
     "logout": "تسجيل الخروج",
+    "changePassword": "تغيير كلمة المرور",
     "positions": "المناصب",
     "positionHistory": "سجل المناصب"
   },
@@ -172,5 +173,17 @@
     "searchHint": "البحث حسب: الرقم الوظيفي، اسم الموظف، أو اسم المنصب",
     "employeeName": "اسم الموظف",
     "positionName": "اسم المنصب"
+  },
+  "changePassword": {
+    "title": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "submit": "تغيير كلمة المرور",
+    "success": "تم تغيير كلمة المرور بنجاح!",
+    "error": "تعذر تغيير كلمة المرور. حاول مرة أخرى.",
+    "incorrectCurrentPassword": "كلمة المرور الحالية غير صحيحة.",
+    "mismatch": "كلمتا المرور غير متطابقتين.",
+    "minLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
   }
 }

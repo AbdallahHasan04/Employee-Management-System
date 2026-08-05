@@ -1,4 +1,5 @@
 {
+  
   "common": {
     "eyebrow": "Employee Management System",
     "actions": "Actions",
@@ -31,6 +32,7 @@
     "employees": "Employees",
     "departments": "Departments",
     "logout": "Logout",
+    "changePassword": "Change Password",
     "positions": "Positions",
     "positionHistory": "Position History"
   },
@@ -169,5 +171,17 @@
     "searchHint": "Search by: Employee No, Employee Name, or Position Name",
     "employeeName": "Employee Name",
     "positionName": "Position Name"
-}
+},
+"changePassword": {
+    "title": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "submit": "Change Password",
+    "success": "Password changed successfully!",
+    "error": "Could not change password. Please try again.",
+    "incorrectCurrentPassword": "Current password is incorrect.",
+    "mismatch": "Passwords do not match.",
+    "minLength": "Password must be at least 6 characters."
+  }
 }

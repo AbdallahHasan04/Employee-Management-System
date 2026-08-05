@@ -13,6 +13,7 @@
 
   <div class="app-nav__actions">
     <app-language-switcher variant="dark"></app-language-switcher>
+    <button class="app-nav__logout" (click)="onChangePassword()">{{ 'nav.changePassword' | translate }}</button>
     <button class="app-nav__logout" (click)="onLogout()">{{ 'nav.logout' | translate }}</button>
   </div>
 </nav>
