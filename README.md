@@ -31,7 +31,7 @@ A full-stack web application for managing employee records, departments, positio
 **Authentication & Security**
 - JWT-based authentication with configurable token expiration
 - PBKDF2 password hashing (built-in `System.Security.Cryptography`, no external packages)
-- Login rate limiting: lockout after repeated failed attempts, with a persistent countdown that survives a page refresh
+- Login rate limiting: lockout after repeated failed attempts, with a persistent countdown
 - Self-service change password (current password verification required, new password confirmed and validated)
 - Sessions stay active while in use; only a page refresh or navigation after expiry redirects to login
 
@@ -43,13 +43,7 @@ A full-stack web application for managing employee records, departments, positio
 
 **Localization**
 - Full English/Arabic toggle across the entire app via `@ngx-translate/core`
-- Complete RTL layout mirroring via Angular CDK Directionality, including dialogs (which otherwise default to LTR direction and stale-cache the direction from the first dialog opened in a session — explicitly worked around here)
-
-**UX details**
-- Reusable confirmation dialog (used for both delete confirmation and discard-unsaved-changes, with configurable label/color)
-- Snackbar success/error notifications throughout
-- Password visibility toggle on login and change-password forms
-- Debounced live search on all list pages
+- Complete RTL layout mirroring via Angular CDK Directionality
 
 ## Architecture
 
@@ -67,9 +61,8 @@ A full-stack web application for managing employee records, departments, positio
 **Data integrity patterns used throughout:**
 - Soft delete (`IsDeleted` flag) with EF Core global query filters on every entity
 - Full audit trail (`CreatedBy`, `CreationDate`, `ModifiedBy`, `ModificationDate`) on every table
-- `IgnoreQueryFilters()` with a manual `IsDeleted` check where soft delete and `Include()` would otherwise interact incorrectly (e.g. position history staying visible for soft-deleted employees)
 - Transactional multi-step writes via a `IUnitOfWork`/`BeginTransactionAsync` pattern (e.g. employee creation, which links a `User` row and an `Employee` row and must not partially succeed)
-- AutoMapper profile for entity↔DTO mapping, reserved for genuine transformations and mismatches (renames, defaults, nested navigation lookups) rather than 1:1 field copies, with explicit `.Ignore()` guards protecting audit fields and immutable fields (e.g. `Username`) from being overwritten by client input on update
+- AutoMapper profile for entity↔DTO mapping
 
 ## Tech stack
 
