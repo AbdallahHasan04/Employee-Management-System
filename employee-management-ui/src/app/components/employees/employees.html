@@ -44,13 +44,19 @@
 
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.employeeNo' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newEmployee.employeeNo">
+          <mat-label>{{ 'employees.employeeNo' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newEmployee.employeeNo" required #empNoNew="ngModel">
+          @if (empNoNew.invalid && empNoNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.nameEn' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newEmployee.nameEn">
+          <mat-label>{{ 'employees.nameEn' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newEmployee.nameEn" required #nameEnNew="ngModel">
+          @if (nameEnNew.invalid && nameEnNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -59,31 +65,43 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.department' | translate }}</mat-label>
-          <mat-select [(ngModel)]="newEmployee.departmentId">
+          <mat-label>{{ 'employees.department' | translate }}<span class="required-marker">*</span></mat-label>
+          <mat-select [(ngModel)]="newEmployee.departmentId" required #deptNew="ngModel">
             @for (dept of departments; track dept.id) {
               <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
             }
           </mat-select>
+          @if (deptNew.invalid && deptNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.position' | translate }}</mat-label>
-          <mat-select [(ngModel)]="newEmployee.positionId">
+          <mat-label>{{ 'employees.position' | translate }}<span class="required-marker">*</span></mat-label>
+          <mat-select [(ngModel)]="newEmployee.positionId" required #posNew="ngModel">
             @for (pos of positions; track pos.id) {
               <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
             }
           </mat-select>
+          @if (posNew.invalid && posNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.username' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newEmployee.username">
+          <mat-label>{{ 'employees.username' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newEmployee.username" required #usernameNew="ngModel">
+          @if (usernameNew.invalid && usernameNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.nationalNo' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newEmployee.nationalNo">
+          <mat-label>{{ 'employees.nationalNo' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newEmployee.nationalNo" required #natNoNew="ngModel">
+          @if (natNoNew.invalid && natNoNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -96,12 +114,18 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'employees.birthdate' | translate }}</mat-label>
-          <input matInput type="date" [(ngModel)]="newEmployee.birthdate">
+          <input matInput type="date" [(ngModel)]="newEmployee.birthdate" [max]="today" #birthdateNew="ngModel">
+          @if (birthdateNew.hasError('max') && birthdateNew.touched) {
+            <mat-error>{{ 'common.futureDateError' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'employees.mobileNumber' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newEmployee.mobileNumber">
+          <input matInput [(ngModel)]="newEmployee.mobileNumber" [pattern]="phonePattern" #mobileNew="ngModel">
+          @if (mobileNew.hasError('pattern') && mobileNew.touched) {
+            <mat-error>{{ 'common.invalidPhoneNumber' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -162,8 +186,11 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.nameEn' | translate }}</mat-label>
-          <input matInput [(ngModel)]="editingEmployee.nameEn">
+          <mat-label>{{ 'employees.nameEn' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="editingEmployee.nameEn" required #nameEnEdit="ngModel">
+          @if (nameEnEdit.invalid && nameEnEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -172,21 +199,27 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.department' | translate }}</mat-label>
-          <mat-select [(ngModel)]="editingEmployee.departmentId">
+          <mat-label>{{ 'employees.department' | translate }}<span class="required-marker">*</span></mat-label>
+          <mat-select [(ngModel)]="editingEmployee.departmentId" required #deptEdit="ngModel">
             @for (dept of departments; track dept.id) {
               <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
             }
           </mat-select>
+          @if (deptEdit.invalid && deptEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.position' | translate }}</mat-label>
-          <mat-select [(ngModel)]="editingEmployee.positionId">
+          <mat-label>{{ 'employees.position' | translate }}<span class="required-marker">*</span></mat-label>
+          <mat-select [(ngModel)]="editingEmployee.positionId" required #posEdit="ngModel">
             @for (pos of positions; track pos.id) {
               <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
             }
           </mat-select>
+          @if (posEdit.invalid && posEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -195,8 +228,11 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'employees.nationalNo' | translate }}</mat-label>
-          <input matInput [(ngModel)]="editingEmployee.nationalNo">
+          <mat-label>{{ 'employees.nationalNo' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="editingEmployee.nationalNo" required #natNoEdit="ngModel">
+          @if (natNoEdit.invalid && natNoEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -209,7 +245,10 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'employees.mobileNumber' | translate }}</mat-label>
-          <input matInput [(ngModel)]="editingEmployee.mobileNumber">
+          <input matInput [(ngModel)]="editingEmployee.mobileNumber" [pattern]="phonePattern" #mobileEdit="ngModel">
+          @if (mobileEdit.hasError('pattern') && mobileEdit.touched) {
+            <mat-error>{{ 'common.invalidPhoneNumber' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">

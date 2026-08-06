@@ -25,7 +25,9 @@
     "discardChangesTitle": "Discard Changes?",
     "discardChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
     "discardChanges": "Discard",
-    "fieldRequired": "This field is required."
+    "fieldRequired": "This field is required.",
+    "futureDateError": "Date cannot be in the future.",
+    "invalidPhoneNumber": "Numbers and symbols only."
   },
   "nav": {
     "brand": "Employee Management",
@@ -74,7 +76,7 @@
     "credentialsPasswordLabel": "Password:",
     "credentialsPasswordNote": "— copy it now, it won't be shown again.",
     "fetchError": "Could not fetch employee list. Verify your backend is running",
-    "requiredFields": "Employee No, Name (EN), Username and National No are required.",
+    "requiredFields": "Employee No, Name (EN), Username, National No, Department, and Position are required.",
     "departmentRequired": "Please select a department.",
     "updateRequiredFields": "Name (EN), National No and Department are required.",
     "notFound": "Employee not found.",

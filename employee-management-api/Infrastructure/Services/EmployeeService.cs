@@ -72,7 +72,7 @@ namespace Infrastructure.Services
                 await _userRepository.AddAsync(user);
 
                 var employee = _mapper.Map<Employee>(dto);
-                employee.Username = dto.Username; // ignored by the profile to protect immutability on update, set here
+                employee.Username = dto.Username; // ignored by the profile to protect immutability because its FK
                 employee.CreatedBy = createdBy;
                 employee.CreationDate = DateTime.UtcNow;
                 await _employeeRepository.AddAsync(employee); // populates employee.Id

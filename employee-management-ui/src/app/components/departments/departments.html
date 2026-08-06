@@ -12,18 +12,27 @@
       <h2 class="card-title">{{ 'departments.newTitle' | translate }}</h2>
       <div class="form-grid">
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'departments.departmentCode' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newDepartment.departmentCode">
+          <mat-label>{{ 'departments.departmentCode' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newDepartment.departmentCode" required #codeNew="ngModel">
+          @if (codeNew.invalid && codeNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'departments.nameEn' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newDepartment.nameEn">
+          <mat-label>{{ 'departments.nameEn' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newDepartment.nameEn" required #nameEnNew="ngModel">
+          @if (nameEnNew.invalid && nameEnNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'departments.nameAr' | translate }}</mat-label>
-          <input matInput [(ngModel)]="newDepartment.nameAr">
+          <mat-label>{{ 'departments.nameAr' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="newDepartment.nameAr" required #nameArNew="ngModel">
+          @if (nameArNew.invalid && nameArNew.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -52,13 +61,19 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'departments.nameEn' | translate }}</mat-label>
-          <input matInput [(ngModel)]="editingDepartment.nameEn">
+          <mat-label>{{ 'departments.nameEn' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="editingDepartment.nameEn" required #nameEnEdit="ngModel">
+          @if (nameEnEdit.invalid && nameEnEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'departments.nameAr' | translate }}</mat-label>
-          <input matInput [(ngModel)]="editingDepartment.nameAr">
+          <mat-label>{{ 'departments.nameAr' | translate }}<span class="required-marker">*</span></mat-label>
+          <input matInput [(ngModel)]="editingDepartment.nameAr" required #nameArEdit="ngModel">
+          @if (nameArEdit.invalid && nameArEdit.touched) {
+            <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">

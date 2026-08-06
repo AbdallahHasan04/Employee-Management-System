@@ -11,26 +11,37 @@
     <h2 class="card-title">{{ 'positionHistory.assignTitle' | translate }}</h2>
     <div class="form-grid">
       <mat-form-field appearance="outline">
-        <mat-label>{{ 'positionHistory.employee' | translate }}</mat-label>
-        <mat-select [(ngModel)]="newAssignment.employeeId">
+        <mat-label>{{ 'positionHistory.employee' | translate }}<span class="required-marker">*</span></mat-label>
+        <mat-select [(ngModel)]="newAssignment.employeeId" required #empRef="ngModel">
           @for (emp of employees; track emp.id) {
             <mat-option [value]="emp.id">{{ emp.nameEn }} ({{ emp.employeeNo }})</mat-option>
           }
         </mat-select>
+        @if (empRef.invalid && empRef.touched) {
+          <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>{{ 'positionHistory.position' | translate }}</mat-label>
-        <mat-select [(ngModel)]="newAssignment.positionId">
+        <mat-label>{{ 'positionHistory.position' | translate }}<span class="required-marker">*</span></mat-label>
+        <mat-select [(ngModel)]="newAssignment.positionId" required #posRef="ngModel">
           @for (pos of positions; track pos.id) {
             <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
           }
         </mat-select>
+        @if (posRef.invalid && posRef.touched) {
+          <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>{{ 'positionHistory.startDate' | translate }}</mat-label>
-        <input matInput type="date" [(ngModel)]="newAssignment.startDate">
+        <mat-label>{{ 'positionHistory.startDate' | translate }}<span class="required-marker">*</span></mat-label>
+        <input matInput type="date" [(ngModel)]="newAssignment.startDate" [max]="today" required #startDateRef="ngModel">
+        @if (startDateRef.hasError('required') && startDateRef.touched) {
+          <mat-error>{{ 'common.fieldRequired' | translate }}</mat-error>
+        } @else if (startDateRef.hasError('max') && startDateRef.touched) {
+          <mat-error>{{ 'common.futureDateError' | translate }}</mat-error>
+        }
       </mat-form-field>
     </div>
 

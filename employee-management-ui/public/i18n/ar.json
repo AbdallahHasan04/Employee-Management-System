@@ -24,7 +24,9 @@
     "discardChangesTitle": "تجاهل التغييرات؟",
     "discardChangesMessage": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟",
     "discardChanges": "تجاهل",
-    "fieldRequired": "هذا الحقل مطلوب."
+    "fieldRequired": "هذا الحقل مطلوب.",
+    "futureDateError": "لا يمكن أن يكون التاريخ في المستقبل.",
+    "invalidPhoneNumber": "أرقام ورموز فقط."
   },
   "nav": {
     "brand": "إدارة الموظفين",

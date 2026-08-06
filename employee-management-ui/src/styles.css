@@ -14,6 +14,11 @@ html, body
   text-align: center;
 }
 
+.required-marker {
+  color: #B3261E;
+  margin-inline-start: 2px;
+}
+
 .snackbar-success {
   --mdc-snackbar-container-color: #1E7E42;
   --mdc-snackbar-supporting-text-color: #ffffff;

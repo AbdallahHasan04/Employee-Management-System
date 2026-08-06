@@ -64,6 +64,11 @@ export class PositionHistoryComponent implements OnInit, OnDestroy
   totalCount = 0;
   pageSizeOptions = [5, 10, 25, 50];
 
+  get today(): string
+  {
+    return new Date().toISOString().split('T')[0];
+  }
+
   ngOnInit()
   {
     this.loadEmployees();
@@ -163,6 +168,11 @@ export class PositionHistoryComponent implements OnInit, OnDestroy
   {
     if (!this.newAssignment.employeeId || !this.newAssignment.positionId || !this.newAssignment.startDate) {
       this.snackbar.showError(this.translate.instant('positionHistory.requiredFields'));
+      return;
+    }
+
+    if (this.newAssignment.startDate > this.today) {
+      this.snackbar.showError(this.translate.instant('common.futureDateError'));
       return;
     }
 

@@ -8,6 +8,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { CustomPaginatorIntl } from './services/paginator-intl';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: 'en',
       lang: 'en'
     }),
-    { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl }
+    { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl },
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { hideRequiredMarker: true } }
   ]
 };

@@ -87,6 +87,14 @@ export class EmployeesComponent implements OnInit, OnDestroy
   totalCount = 0;
   pageSizeOptions = [5, 10, 25, 50];
 
+
+  readonly phonePattern = '^[0-9+\\-\\s()]*$';
+
+  get today(): string
+  {
+    return new Date().toISOString().split('T')[0];
+  }
+
   ngOnInit()
   {
     this.loadDepartments();
@@ -304,6 +312,11 @@ export class EmployeesComponent implements OnInit, OnDestroy
 
     if (!this.newEmployee.positionId) {
       this.snackbar.showError(this.translate.instant('employees.positionRequired'));
+      return;
+    }
+
+    if (this.newEmployee.birthdate && this.newEmployee.birthdate > this.today) {
+      this.snackbar.showError(this.translate.instant('common.futureDateError'));
       return;
     }
 
