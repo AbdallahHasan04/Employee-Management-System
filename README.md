@@ -43,17 +43,7 @@ A full-stack web application for managing employee records, departments, positio
 
 **Localization**
 - Full English/Arabic toggle across the entire app via `@ngx-translate/core`
-<<<<<<< HEAD
-- Complete RTL layout mirroring via Angular CDK Directionality, including dialogs (which otherwise default to LTR direction and stale-cache the direction from the first dialog opened in a session — explicitly worked around here)
-
-**UX details**
-- Reusable confirmation dialog (used for both delete confirmation and discard-unsaved-changes, with configurable label/color)
-- Snackbar success/error notifications throughout
-- Password visibility toggle on login and change-password forms
-- Debounced live search on all list pages
-=======
 - Complete RTL layout mirroring via Angular CDK Directionality
->>>>>>> a3b33627a2667b1bfd93d548e427d3a7aaa98f0d
 
 ## Architecture
 
@@ -71,14 +61,8 @@ A full-stack web application for managing employee records, departments, positio
 **Data integrity patterns used throughout:**
 - Soft delete (`IsDeleted` flag) with EF Core global query filters on every entity
 - Full audit trail (`CreatedBy`, `CreationDate`, `ModifiedBy`, `ModificationDate`) on every table
-<<<<<<< HEAD
-- `IgnoreQueryFilters()` with a manual `IsDeleted` check where soft delete and `Include()` would otherwise interact incorrectly (e.g. position history staying visible for soft-deleted employees)
-- Transactional multi-step writes via a `IUnitOfWork`/`BeginTransactionAsync` pattern (e.g. employee creation, which links a `User` row and an `Employee` row and must not partially succeed)
-- AutoMapper profile for entity↔DTO mapping, reserved for genuine transformations and mismatches (renames, defaults, nested navigation lookups) rather than 1:1 field copies, with explicit `.Ignore()` guards protecting audit fields and immutable fields (e.g. `Username`) from being overwritten by client input on update
-=======
 - Transactional multi-step writes via a `IUnitOfWork`/`BeginTransactionAsync` pattern (e.g. employee creation, which links a `User` row and an `Employee` row and must not partially succeed)
 - AutoMapper profile for entity↔DTO mapping
->>>>>>> a3b33627a2667b1bfd93d548e427d3a7aaa98f0d
 
 ## Tech stack
 
