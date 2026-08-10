@@ -1,0 +1,81 @@
+<app-navbar></app-navbar>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'common.eyebrow' | translate }}</p>
+      <h1>{{ 'dashboard.title' | translate }}</h1>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  @if (summary && !hasNoData) {
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--departments">
+          <mat-icon>domain</mat-icon>
+        </div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalDepartments }}</span>
+          <span class="summary-label">{{ 'dashboard.totalDepartments' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--positions">
+          <mat-icon>work</mat-icon>
+        </div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalPositions }}</span>
+          <span class="summary-label">{{ 'dashboard.totalPositions' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--active">
+          <mat-icon>groups</mat-icon>
+        </div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalActiveEmployees }}</span>
+          <span class="summary-label">{{ 'dashboard.totalActiveEmployees' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--male">
+          <mat-icon>man</mat-icon>
+        </div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalMaleEmployees }}</span>
+          <span class="summary-label">{{ 'dashboard.totalMaleEmployees' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--female">
+          <mat-icon>woman</mat-icon>
+        </div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalFemaleEmployees }}</span>
+          <span class="summary-label">{{ 'dashboard.totalFemaleEmployees' | translate }}</span>
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (!isLoading && hasError) {
+    <div class="empty-state">
+      <mat-icon>cloud_off</mat-icon>
+      <p>{{ 'dashboard.fetchError' | translate }}</p>
+    </div>
+  }
+
+  @if (!isLoading && !hasError && (summary === null || hasNoData)) {
+    <div class="empty-state">
+      <mat-icon>bar_chart</mat-icon>
+      <p>{{ 'dashboard.noData' | translate }}</p>
+    </div>
+  }
+</div>

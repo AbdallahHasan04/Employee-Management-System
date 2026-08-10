@@ -99,5 +99,22 @@ namespace Data.Repository
                 .Select(g => new { DepartmentId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.DepartmentId, x => x.Count);
         }
+
+        public async Task<(int ActiveCount, int MaleCount, int FemaleCount)> GetEmployeeStatsAsync()
+        {
+            var stats = await _context.Employees
+                .GroupBy(e => 1)
+                .Select(g => new
+                {
+                    ActiveCount = g.Count(e => e.Status == "Active"),
+                    MaleCount = g.Count(e => e.Gender == "Male" && e.Status == "Active"),
+                    FemaleCount = g.Count(e => e.Gender == "Female" && e.Status == "Active")
+                })
+                .FirstOrDefaultAsync();
+
+            return stats == null
+                ? (0, 0, 0)
+                : (stats.ActiveCount, stats.MaleCount, stats.FemaleCount);
+        }
     }
 }

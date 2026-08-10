@@ -104,7 +104,7 @@ export class LoginComponent implements OnInit, OnDestroy
       ).subscribe({
         next: (response) => {
           this.errormessage = '';
-          this.router.navigate(['/employees']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           console.error('Login error details:', err);

@@ -31,6 +31,7 @@
   },
   "nav": {
     "brand": "Employee Management",
+    "dashboard": "Dashboard",
     "employees": "Employees",
     "departments": "Departments",
     "logout": "Logout",
@@ -50,6 +51,16 @@
     "submit": "Submit",
     "invalidCredentials": "Invalid Username or Password",
     "lockoutMessage": "Too many failed attempts. Please try again in {{time}}."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalDepartments": "Total Departments",
+    "totalPositions": "Total Positions",
+    "totalActiveEmployees": "Total Active Employees",
+    "totalMaleEmployees": "Total Male Employees",
+    "totalFemaleEmployees": "Total Female Employees",
+    "fetchError": "Could not fetch dashboard data. Verify your backend is running",
+    "noData": "No dashboard data available yet."
   },
   "employees": {
     "title": "Employee Page",

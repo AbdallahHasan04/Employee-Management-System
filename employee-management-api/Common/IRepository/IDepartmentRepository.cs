@@ -10,5 +10,6 @@ namespace Common.IRepository
         Task UpdateAsync(Department department);
         Task DeleteAsync(int id, string? deletedBy);
         Task<(List<Department> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search);
+        Task<int> GetTotalCountAsync();
     }
 }

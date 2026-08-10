@@ -30,6 +30,7 @@
   },
   "nav": {
     "brand": "إدارة الموظفين",
+    "dashboard": "لوحة التحكم",
     "employees": "الموظفون",
     "departments": "الأقسام",
     "logout": "تسجيل الخروج",
@@ -49,6 +50,16 @@
     "submit": "دخول",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
     "lockoutMessage": "عدد كبير من المحاولات الفاشلة. يرجى المحاولة مرة أخرى خلال {{time}}."
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "totalDepartments": "إجمالي الأقسام",
+    "totalPositions": "إجمالي المناصب",
+    "totalActiveEmployees": "إجمالي الموظفين النشطين",
+    "totalMaleEmployees": "إجمالي الموظفين الذكور",
+    "totalFemaleEmployees": "إجمالي الموظفات",
+    "fetchError": "تعذر جلب بيانات لوحة التحكم. تأكد من تشغيل الخادم",
+    "noData": "لا توجد بيانات لعرضها بعد."
   },
   "employees": {
     "title": "صفحة الموظفين",

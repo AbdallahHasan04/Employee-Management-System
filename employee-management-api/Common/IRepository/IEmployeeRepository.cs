@@ -12,5 +12,6 @@ namespace Common.IRepository
         Task<bool> ExistsByDepartmentIdAsync(int departmentId);
         Task<(List<Employee> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search);
         Task<Dictionary<int, int>> GetEmployeeCountsForDepartmentIdsAsync(IEnumerable<int> departmentIds);
+        Task<(int ActiveCount, int MaleCount, int FemaleCount)> GetEmployeeStatsAsync();
     }
 }

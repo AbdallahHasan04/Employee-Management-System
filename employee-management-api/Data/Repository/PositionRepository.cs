@@ -80,5 +80,10 @@ namespace Data.Repository
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return (items, totalCount);
         }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _context.Positions.CountAsync();
+        }
     }
 }
