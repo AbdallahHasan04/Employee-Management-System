@@ -1,0 +1,10 @@
+<div class="chart-wrapper">
+  <div #chartDiv class="chart-container"></div>
+
+  @if (isEmpty) {
+    <div class="empty-state">
+      <mat-icon>bar_chart</mat-icon>
+      <p>{{ noDataLabel }}</p>
+    </div>
+  }
+</div>

@@ -7,11 +7,11 @@
     </div>
   </header>
 
-  @if (isLoading) {
+  @if (isLoadingSummary) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
-  @if (summary && !hasNoData) {
+  @if (summary && !hasNoSummaryData) {
     <section class="summary-grid">
       <div class="summary-card">
         <div class="summary-icon summary-icon--departments">
@@ -65,17 +65,41 @@
     </section>
   }
 
-  @if (!isLoading && hasError) {
+  @if (!isLoadingSummary && summaryError) {
     <div class="empty-state">
       <mat-icon>cloud_off</mat-icon>
       <p>{{ 'dashboard.fetchError' | translate }}</p>
     </div>
   }
 
-  @if (!isLoading && !hasError && (summary === null || hasNoData)) {
+  @if (!isLoadingSummary && !summaryError && (summary === null || hasNoSummaryData)) {
     <div class="empty-state">
       <mat-icon>bar_chart</mat-icon>
       <p>{{ 'dashboard.noData' | translate }}</p>
     </div>
   }
+
+  <section class="card chart-card">
+    <h2 class="card-title">{{ 'dashboard.employeesByDepartment' | translate }}</h2>
+
+    @if (isLoadingDepartmentChart) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    @if (!isLoadingDepartmentChart && departmentChartError) {
+      <div class="empty-state">
+        <mat-icon>cloud_off</mat-icon>
+        <p>{{ 'dashboard.departmentChartError' | translate }}</p>
+      </div>
+    }
+
+    @if (!isLoadingDepartmentChart && !departmentChartError) {
+      <app-employee-bar-chart
+        [data]="departmentChartData"
+        [categoryLabel]="departmentCategoryLabel"
+        [valueLabel]="employeesValueLabel"
+        [noDataLabel]="noChartDataLabel">
+      </app-employee-bar-chart>
+    }
+  </section>
 </div>

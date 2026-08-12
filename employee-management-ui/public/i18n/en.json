@@ -60,7 +60,12 @@
     "totalMaleEmployees": "Total Male Employees",
     "totalFemaleEmployees": "Total Female Employees",
     "fetchError": "Could not fetch dashboard data. Verify your backend is running",
-    "noData": "No dashboard data available yet."
+    "noData": "No dashboard data available yet.",
+    "employeesByDepartment": "Employees by Department",
+    "departmentLabel": "Department",
+    "employeesLabel": "Employees",
+    "departmentChartError": "Could not load the department chart. Verify your backend is running",
+    "noChartData": "No data to display."
   },
   "employees": {
     "title": "Employee Page",

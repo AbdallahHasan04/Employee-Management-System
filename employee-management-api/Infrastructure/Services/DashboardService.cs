@@ -35,5 +35,22 @@ namespace Infrastructure.Services
                 TotalFemaleEmployees = femaleCount
             };
         }
+
+        public async Task<List<DepartmentEmployeeCountDto>> GetEmployeesByDepartmentAsync()
+        {
+            var departments = await _departmentRepository.GetAllAsync();
+            var departmentIds = departments.Select(d => d.Id).ToList();
+            var counts = await _employeeRepository.GetEmployeeCountsForDepartmentIdsAsync(departmentIds);
+
+            return departments
+                .Select(d => new DepartmentEmployeeCountDto
+                {
+                    DepartmentNameEn = d.NameEn,
+                    DepartmentNameAr = d.NameAr,
+                    EmployeeCount = counts.GetValueOrDefault(d.Id, 0)
+                })
+                .OrderBy(d => d.DepartmentNameEn)
+                .ToList();
+        }
     }
 }

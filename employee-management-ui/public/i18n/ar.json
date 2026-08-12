@@ -59,7 +59,12 @@
     "totalMaleEmployees": "إجمالي الموظفين الذكور",
     "totalFemaleEmployees": "إجمالي الموظفات",
     "fetchError": "تعذر جلب بيانات لوحة التحكم. تأكد من تشغيل الخادم",
-    "noData": "لا توجد بيانات لعرضها بعد."
+    "noData": "لا توجد بيانات لعرضها بعد.",
+    "employeesByDepartment": "الموظفون حسب القسم",
+    "departmentLabel": "القسم",
+    "employeesLabel": "الموظفون",
+    "departmentChartError": "تعذر تحميل مخطط الأقسام. تأكد من تشغيل الخادم",
+    "noChartData": "لا توجد بيانات لعرضها."
   },
   "employees": {
     "title": "صفحة الموظفين",

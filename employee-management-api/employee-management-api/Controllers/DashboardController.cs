@@ -22,5 +22,12 @@ namespace API.Controllers
             var summary = await _service.GetSummaryAsync();
             return Ok(summary);
         }
+
+        [HttpGet("employees-by-department")]
+        public async Task<ActionResult<List<DepartmentEmployeeCountDto>>> GetEmployeesByDepartment()
+        {
+            var result = await _service.GetEmployeesByDepartmentAsync();
+            return Ok(result);
+        }
     }
 }

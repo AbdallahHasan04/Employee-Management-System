@@ -11,6 +11,13 @@ export interface DashboardSummary
     totalFemaleEmployees: number;
 }
 
+export interface DepartmentEmployeeCount
+{
+    departmentNameEn: string;
+    departmentNameAr: string;
+    employeeCount: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private http = inject(HttpClient);
@@ -19,5 +26,10 @@ export class DashboardService {
     getSummary(): Observable<DashboardSummary>
     {
         return this.http.get<DashboardSummary>(`${this.apiUrl}/summary`);
+    }
+
+    getEmployeesByDepartment(): Observable<DepartmentEmployeeCount[]>
+    {
+        return this.http.get<DepartmentEmployeeCount[]>(`${this.apiUrl}/employees-by-department`);
     }
 }
