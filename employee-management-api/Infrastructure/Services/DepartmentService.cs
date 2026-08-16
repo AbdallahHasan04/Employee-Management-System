@@ -52,7 +52,7 @@ namespace Infrastructure.Services
             var department = _mapper.Map<Department>(dto);
             department.CreatedBy = createdBy;
             department.CreationDate = DateTime.UtcNow;
-
+             
             await _departmentRepository.AddAsync(department);
             return MapToDto(department, 0);
         }

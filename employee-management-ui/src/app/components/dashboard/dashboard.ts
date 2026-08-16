@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { Subject, takeUntil } from 'rxjs';
-import { DashboardService, DashboardSummary, DepartmentEmployeeCount } from '../../services/dashboard';
+import { DashboardService, DashboardSummary, DepartmentEmployeeCount, PositionEmployeeCount } from '../../services/dashboard';
 import { NavbarComponent } from '../navbar/navbar';
 import { EmployeeBarChartComponent, BarChartDatum } from '../employee-bar-chart/employee-bar-chart';
 import { SnackbarService } from '../../services/snackbar';
@@ -40,7 +40,14 @@ export class DashboardComponent implements OnInit, OnDestroy
   isLoadingDepartmentChart = false;
   departmentChartError = false;
 
+  // Employees by position chart
+  private positionCounts: PositionEmployeeCount[] = [];
+  positionChartData: BarChartDatum[] = [];
+  isLoadingPositionChart = false;
+  positionChartError = false;
+
   departmentCategoryLabel = '';
+  positionCategoryLabel = '';
   employeesValueLabel = '';
   noChartDataLabel = '';
 
@@ -59,14 +66,15 @@ export class DashboardComponent implements OnInit, OnDestroy
   {
     this.refreshChartLabels();
 
-    // refresh on language change
     this.translate.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.refreshChartLabels();
-      this.departmentChartData = this.mapDepartmentData(this.departmentCounts);
+      this.departmentChartData = this.mapChartData(this.departmentCounts, c => c.departmentNameEn, c => c.departmentNameAr);
+      this.positionChartData = this.mapChartData(this.positionCounts, c => c.positionNameEn, c => c.positionNameAr);
     });
 
     this.loadSummary();
     this.loadDepartmentChart();
+    this.loadPositionChart();
   }
 
   ngOnDestroy(): void
@@ -104,7 +112,7 @@ export class DashboardComponent implements OnInit, OnDestroy
     this.dashboardService.getEmployeesByDepartment().subscribe({
       next: (result) => {
         this.departmentCounts = result;
-        this.departmentChartData = this.mapDepartmentData(result);
+        this.departmentChartData = this.mapChartData(result, c => c.departmentNameEn, c => c.departmentNameAr);
         this.isLoadingDepartmentChart = false;
         this.cdr.detectChanges();
       },
@@ -118,11 +126,33 @@ export class DashboardComponent implements OnInit, OnDestroy
     });
   }
 
-  private mapDepartmentData(items: DepartmentEmployeeCount[]): BarChartDatum[]
+  loadPositionChart(): void
+  {
+    this.isLoadingPositionChart = true;
+    this.positionChartError = false;
+
+    this.dashboardService.getEmployeesByPosition().subscribe({
+      next: (result) => {
+        this.positionCounts = result;
+        this.positionChartData = this.mapChartData(result, c => c.positionNameEn, c => c.positionNameAr);
+        this.isLoadingPositionChart = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('API Error: Could not fetch employees-by-position chart data.', error);
+        this.positionChartError = true;
+        this.isLoadingPositionChart = false;
+        this.snackbar.showError(this.translate.instant('dashboard.positionChartError'));
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private mapChartData<T extends { employeeCount: number }>(items: T[], nameEn: (item: T) => string, nameAr: (item: T) => string): BarChartDatum[]
   {
     const isArabic = this.languageService.getCurrentLang() === 'ar';
     return items.map(item => ({
-      name: isArabic ? item.departmentNameAr : item.departmentNameEn,
+      name: isArabic ? nameAr(item) : nameEn(item),
       value: item.employeeCount
     }));
   }
@@ -130,6 +160,7 @@ export class DashboardComponent implements OnInit, OnDestroy
   private refreshChartLabels(): void
   {
     this.departmentCategoryLabel = this.translate.instant('dashboard.departmentLabel');
+    this.positionCategoryLabel = this.translate.instant('dashboard.positionLabel');
     this.employeesValueLabel = this.translate.instant('dashboard.employeesLabel');
     this.noChartDataLabel = this.translate.instant('dashboard.noChartData');
   }

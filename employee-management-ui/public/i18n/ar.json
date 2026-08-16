@@ -64,6 +64,9 @@
     "departmentLabel": "القسم",
     "employeesLabel": "الموظفون",
     "departmentChartError": "تعذر تحميل مخطط الأقسام. تأكد من تشغيل الخادم",
+    "employeesByPosition": "الموظفون حسب المنصب",
+    "positionLabel": "المنصب",
+    "positionChartError": "تعذر تحميل مخطط المناصب. تأكد من تشغيل الخادم",
     "noChartData": "لا توجد بيانات لعرضها."
   },
   "employees": {

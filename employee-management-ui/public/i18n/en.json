@@ -65,6 +65,9 @@
     "departmentLabel": "Department",
     "employeesLabel": "Employees",
     "departmentChartError": "Could not load the department chart. Verify your backend is running",
+    "employeesByPosition": "Employees by Position",
+    "positionLabel": "Position",
+    "positionChartError": "Could not load the position chart. Verify your backend is running",
     "noChartData": "No data to display."
   },
   "employees": {

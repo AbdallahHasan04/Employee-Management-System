@@ -18,6 +18,13 @@ export interface DepartmentEmployeeCount
     employeeCount: number;
 }
 
+export interface PositionEmployeeCount
+{
+    positionNameEn: string;
+    positionNameAr: string;
+    employeeCount: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private http = inject(HttpClient);
@@ -31,5 +38,10 @@ export class DashboardService {
     getEmployeesByDepartment(): Observable<DepartmentEmployeeCount[]>
     {
         return this.http.get<DepartmentEmployeeCount[]>(`${this.apiUrl}/employees-by-department`);
+    }
+
+    getEmployeesByPosition(): Observable<PositionEmployeeCount[]>
+    {
+        return this.http.get<PositionEmployeeCount[]>(`${this.apiUrl}/employees-by-position`);
     }
 }

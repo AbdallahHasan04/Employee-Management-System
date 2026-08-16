@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, AfterViewInit, ViewChild, ElementRef, SimpleChanges, inject, effect } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, ViewChild, ElementRef, SimpleChanges, inject, effect, afterNextRender } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
@@ -17,7 +17,7 @@ export interface BarChartDatum
   templateUrl: './employee-bar-chart.html',
   styleUrl: './employee-bar-chart.css',
 })
-export class EmployeeBarChartComponent implements AfterViewInit, OnChanges, OnDestroy
+export class EmployeeBarChartComponent implements OnChanges, OnDestroy
 {
   @Input() data: BarChartDatum[] = [];
   @Input() categoryLabel = 'Category';
@@ -40,18 +40,18 @@ export class EmployeeBarChartComponent implements AfterViewInit, OnChanges, OnDe
 
   constructor()
   {
+
+    afterNextRender(() => {
+      this.viewInitialized = true;
+      this.buildChart();
+    });
+
     effect(() => {
       this.languageService.dir();
       if (this.viewInitialized) {
         this.buildChart();
       }
     });
-  }
-
-  ngAfterViewInit(): void
-  {
-    this.viewInitialized = true;
-    this.buildChart();
   }
 
   ngOnChanges(changes: SimpleChanges): void
@@ -88,7 +88,7 @@ export class EmployeeBarChartComponent implements AfterViewInit, OnChanges, OnDe
 
     const root = am5.Root.new(this.chartDivRef.nativeElement);
     root.setThemes([am5themes_Animated.new(root)]);
-    // cast narrowly rather than widening the whole `root` reference to `any`.
+
     const isRtl = this.languageService.dir() === 'rtl';
     (root as unknown as { rtl: boolean }).rtl = isRtl;
 
@@ -129,8 +129,7 @@ export class EmployeeBarChartComponent implements AfterViewInit, OnChanges, OnDe
         tooltip: am5.Tooltip.new(root, {})
       })
     );
-    // Switching this tooltip's label to HTML content bypasses amCharts5 text layout
-    // lets the browser's text engine render the Arabic instead.
+
     series.get('tooltip')!.label.setAll({
       html: this.buildTooltipHtml(isRtl)
     });
@@ -160,6 +159,7 @@ export class EmployeeBarChartComponent implements AfterViewInit, OnChanges, OnDe
 
   private updateData(): void
   {
+
     if (!this.root || this.isEmpty) {
       this.buildChart();
       return;

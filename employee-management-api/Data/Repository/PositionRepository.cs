@@ -14,6 +14,11 @@ namespace Data.Repository
             _context = context;
         }
 
+        public async Task<IEnumerable<Position>> GetAllAsync()
+        {
+            return await _context.Positions.AsNoTracking().ToListAsync();
+        }
+
         public async Task<Position?> GetByIdAsync(int id)
         {
             return await _context.Positions.FindAsync(id);

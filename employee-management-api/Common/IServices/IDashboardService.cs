@@ -6,5 +6,6 @@ namespace Common.IServices
     {
         Task<DashboardSummaryDto> GetSummaryAsync();
         Task<List<DepartmentEmployeeCountDto>> GetEmployeesByDepartmentAsync();
+        Task<List<PositionEmployeeCountDto>> GetEmployeesByPositionAsync();
     }
 }

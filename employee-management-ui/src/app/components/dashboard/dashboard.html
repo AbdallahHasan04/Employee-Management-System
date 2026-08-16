@@ -79,27 +79,53 @@
     </div>
   }
 
-  <section class="card chart-card">
-    <h2 class="card-title">{{ 'dashboard.employeesByDepartment' | translate }}</h2>
+  <div class="charts-row">
+    <section class="card chart-card">
+      <h2 class="card-title">{{ 'dashboard.employeesByDepartment' | translate }}</h2>
 
-    @if (isLoadingDepartmentChart) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
+      @if (isLoadingDepartmentChart) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
 
-    @if (!isLoadingDepartmentChart && departmentChartError) {
-      <div class="empty-state">
-        <mat-icon>cloud_off</mat-icon>
-        <p>{{ 'dashboard.departmentChartError' | translate }}</p>
-      </div>
-    }
+      @if (!isLoadingDepartmentChart && departmentChartError) {
+        <div class="empty-state">
+          <mat-icon>cloud_off</mat-icon>
+          <p>{{ 'dashboard.departmentChartError' | translate }}</p>
+        </div>
+      }
 
-    @if (!isLoadingDepartmentChart && !departmentChartError) {
-      <app-employee-bar-chart
-        [data]="departmentChartData"
-        [categoryLabel]="departmentCategoryLabel"
-        [valueLabel]="employeesValueLabel"
-        [noDataLabel]="noChartDataLabel">
-      </app-employee-bar-chart>
-    }
-  </section>
+      @if (!isLoadingDepartmentChart && !departmentChartError) {
+        <app-employee-bar-chart
+          [data]="departmentChartData"
+          [categoryLabel]="departmentCategoryLabel"
+          [valueLabel]="employeesValueLabel"
+          [noDataLabel]="noChartDataLabel">
+        </app-employee-bar-chart>
+      }
+    </section>
+
+    <section class="card chart-card">
+      <h2 class="card-title">{{ 'dashboard.employeesByPosition' | translate }}</h2>
+
+      @if (isLoadingPositionChart) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+
+      @if (!isLoadingPositionChart && positionChartError) {
+        <div class="empty-state">
+          <mat-icon>cloud_off</mat-icon>
+          <p>{{ 'dashboard.positionChartError' | translate }}</p>
+        </div>
+      }
+
+      @if (!isLoadingPositionChart && !positionChartError) {
+        <app-employee-bar-chart
+          [data]="positionChartData"
+          [categoryLabel]="positionCategoryLabel"
+          [valueLabel]="employeesValueLabel"
+          [noDataLabel]="noChartDataLabel">
+        </app-employee-bar-chart>
+      }
+    </section>
+  </div>
 </div>
