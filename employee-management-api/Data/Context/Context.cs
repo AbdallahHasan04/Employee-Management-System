@@ -11,6 +11,7 @@ namespace Data.Context
         public DbSet<Department> Departments { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<EmployeePosition> EmployeePositions { get; set; }
+        public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -136,6 +137,30 @@ namespace Data.Context
 
                 entity.HasIndex(ep => ep.EmployeeId);
                 entity.HasQueryFilter(ep => !ep.IsDeleted);
+            });
+
+            // employee_documents
+            modelBuilder.Entity<EmployeeDocument>(entity =>
+            {
+                entity.ToTable("EMPLOYEE_DOCUMENTS");
+                entity.Property(d => d.Id).HasColumnName("ID");
+                entity.Property(d => d.EmployeeId).HasColumnName("EMPLOYEE_ID");
+                entity.Property(d => d.DocumentName).HasColumnName("DOCUMENT_NAME");
+                entity.Property(d => d.DocumentPath).HasColumnName("DOCUMENT_PATH");
+                entity.Property(d => d.IssueDate).HasColumnName("ISSUE_DATE");
+                entity.Property(d => d.ExpiryDate).HasColumnName("EXPIRY_DATE");
+                entity.Property(d => d.Notes).HasColumnName("NOTES");
+                entity.Property(d => d.CreatedBy).HasColumnName("CREATED_BY");
+                entity.Property(d => d.CreationDate).HasColumnName("CREATION_DATE");
+                entity.Property(d => d.ModifiedBy).HasColumnName("MODIFIED_BY");
+                entity.Property(d => d.ModificationDate).HasColumnName("MODIFICATION_DATE");
+
+                entity.HasOne(d => d.Employee)
+                      .WithMany()
+                      .HasForeignKey(d => d.EmployeeId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(d => d.EmployeeId);
             });
         }
     }

@@ -24,16 +24,18 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IEmployeePositionRepository, EmployeePositionRepository>();
+builder.Services.AddScoped<IEmployeeDocumentRepository, EmployeeDocumentRepository>();
 builder.Services.AddScoped<IPositionService, PositionService>();
 builder.Services.AddScoped<IEmployeePositionService, EmployeePositionService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmployeeDocumentService, EmployeeDocumentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IEmployeeDocumentStorageService, EmployeeDocumentStorageService>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddMaps(typeof(AutoMapperProfile).Assembly);
@@ -116,6 +118,7 @@ if (app.Environment.IsDevelopment())
 }
 
 Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "employee-photos"));
+Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "employee-documents"));
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
