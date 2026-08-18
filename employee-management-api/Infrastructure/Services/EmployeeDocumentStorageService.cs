@@ -37,5 +37,19 @@ namespace Infrastructure.Services
         {
             return File.Exists(GetPhysicalPath(relativePath));
         }
+
+        public void DeleteDocument(string? relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return;
+            }
+
+            var fullPath = GetPhysicalPath(relativePath);
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+        }
     }
 }

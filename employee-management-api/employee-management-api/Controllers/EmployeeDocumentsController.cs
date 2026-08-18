@@ -113,6 +113,11 @@ namespace API.Controllers
                 return NotFound(new { message = $"Document with id {id} not found." });
             }
 
+            if (result == DocumentDownloadResult.Expired)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "This document has expired and can no longer be downloaded." });
+            }
+
             if (result == DocumentDownloadResult.FileMissing)
             {
                 return NotFound(new { message = "This document's file could not be found on the server." });
@@ -124,6 +129,19 @@ namespace API.Controllers
             }
 
             return PhysicalFile(physicalPath!, contentType, fileName);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var result = await _service.DeleteDocumentAsync(id);
+
+            return result switch
+            {
+                DocumentDeleteResult.NotFound => NotFound(new { message = $"Document with id {id} not found." }),
+                DocumentDeleteResult.NotYetExpired => Conflict(new { message = "This document cannot be deleted until it has expired." }),
+                _ => Ok(new { message = "Document deleted successfully!" })
+            };
         }
     }
 }

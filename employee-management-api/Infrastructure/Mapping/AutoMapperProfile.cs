@@ -27,7 +27,7 @@ namespace Infrastructure.Mapping
                 .ForMember(d => d.Status, o => o.MapFrom(s => "Active")); // new accounts always start Active
 
             // Employee -> new EmployeePosition row (used when UpdateEmployeeAsync detects a position change)
-            CreateMap<EmployeeDto, EmployeePosition>()
+            CreateMap<EmployeeDto, EmployeePosition>() 
                 .ForMember(d => d.EmployeeId, o => o.MapFrom(s => s.Id))
                 .ForMember(d => d.ModifiedBy, o => o.Ignore())        // this is a brand-new row, dto.ModifiedBy belongs to the Employee's own edit history, not this record
                 .ForMember(d => d.ModificationDate, o => o.Ignore());

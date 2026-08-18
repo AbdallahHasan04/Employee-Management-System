@@ -5,6 +5,7 @@ import { EmployeesComponent } from './components/employees/employees';
 import { DepartmentsComponent } from './components/departments/departments';
 import { PositionsComponent } from './components/positions/positions';
 import { PositionHistoryComponent } from './components/position-history/position-history';
+import { EmployeeDocumentsComponent } from './components/employee-documents/employee-documents';
 import { NotFoundComponent } from './components/not-found/not-found';
 import { authGuard } from './guards/auth-guard';
 
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'departments', component: DepartmentsComponent, canActivate: [authGuard] },
   { path: 'positions', component: PositionsComponent, canActivate: [authGuard] },
   { path: 'position-history', component: PositionHistoryComponent, canActivate: [authGuard] },
+  { path: 'employee-documents', component: EmployeeDocumentsComponent, canActivate: [authGuard] },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', component: NotFoundComponent },
 ];

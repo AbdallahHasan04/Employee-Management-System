@@ -28,6 +28,12 @@ namespace Data.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(EmployeeDocument document)
+        {
+            _context.EmployeeDocuments.Remove(document);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<(List<EmployeeDocument> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
             var query = _context.EmployeeDocuments

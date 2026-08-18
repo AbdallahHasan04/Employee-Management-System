@@ -36,7 +36,8 @@
     "logout": "تسجيل الخروج",
     "changePassword": "تغيير كلمة المرور",
     "positions": "المناصب",
-    "positionHistory": "سجل المناصب"
+    "positionHistory": "سجل المناصب",
+    "employeeDocuments": "مستندات الموظفين"
   },
   "lang": {
     "switchTo": "English"
@@ -194,6 +195,37 @@
     "searchHint": "البحث حسب: الرقم الوظيفي، اسم الموظف، أو اسم المنصب",
     "employeeName": "اسم الموظف",
     "positionName": "اسم المنصب"
+  },
+  "employeeDocuments": {
+    "title": "مستندات الموظفين",
+    "newTitle": "مستند جديد",
+    "employee": "الموظف",
+    "documentName": "اسم المستند",
+    "issueDate": "تاريخ الإصدار",
+    "expiryDate": "تاريخ الانتهاء",
+    "notes": "ملاحظات",
+    "chooseFile": "اختر ملف",
+    "noFileSelected": "لم يتم اختيار ملف",
+    "addDocument": "إضافة مستند",
+    "allDocuments": "جميع المستندات",
+    "employeeName": "اسم الموظف",
+    "download": "تحميل",
+    "noDocuments": "لا توجد مستندات بعد. أضف أول مستند أعلاه.",
+    "noResults": "لا توجد مستندات مطابقة لبحثك.",
+    "searchHint": "البحث حسب: اسم الموظف أو اسم المستند",
+    "fetchError": "تعذر جلب قائمة المستندات. تأكد من تشغيل الخادم",
+    "employeeRequired": "يرجى اختيار الموظف.",
+    "requiredFields": "اسم المستند وتاريخ الإصدار حقول مطلوبة.",
+    "attachmentRequired": "يرجى إرفاق ملف.",
+    "expiryBeforeIssueError": "لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ الإصدار.",
+    "expired": "منتهي الصلاحية",
+    "downloadExpiredError": "انتهت صلاحية هذا المستند ولم يعد بالإمكان تحميله.",
+    "deleteNotExpiredError": "لا يمكن حذف هذا المستند حتى تنتهي صلاحيته.",
+    "deleteSuccess": "تم حذف المستند بنجاح!",
+    "deleteError": "تعذر حذف المستند.",
+    "addSuccess": "تم رفع المستند بنجاح!",
+    "addError": "تعذر رفع المستند.",
+    "downloadError": "تعذر تحميل هذا المستند."
   },
   "changePassword": {
     "title": "تغيير كلمة المرور",

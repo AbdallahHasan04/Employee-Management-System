@@ -37,7 +37,8 @@
     "logout": "Logout",
     "changePassword": "Change Password",
     "positions": "Positions",
-    "positionHistory": "Position History"
+    "positionHistory": "Position History",
+    "employeeDocuments": "Employee Documents"
   },
   "lang": {
     "switchTo": "العربية"
@@ -192,6 +193,37 @@
     "searchHint": "Search by: Employee No, Employee Name, or Position Name",
     "employeeName": "Employee Name",
     "positionName": "Position Name"
+},
+"employeeDocuments": {
+    "title": "Employee Documents",
+    "newTitle": "New Document",
+    "employee": "Employee",
+    "documentName": "Document Name",
+    "issueDate": "Issue Date",
+    "expiryDate": "Expiry Date",
+    "notes": "Notes",
+    "chooseFile": "Choose File",
+    "noFileSelected": "No file selected",
+    "addDocument": "Add Document",
+    "allDocuments": "All Documents",
+    "employeeName": "Employee Name",
+    "download": "Download",
+    "noDocuments": "No documents yet. Add the first one above.",
+    "noResults": "No documents match your search.",
+    "searchHint": "Search by: Employee Name or Document Name",
+    "fetchError": "Could not fetch document list. Verify your backend is running",
+    "employeeRequired": "Please select an employee.",
+    "requiredFields": "Document Name and Issue Date are required.",
+    "attachmentRequired": "Please attach a file.",
+    "expiryBeforeIssueError": "Expiry date cannot be earlier than the issue date.",
+    "expired": "Expired",
+    "downloadExpiredError": "This document has expired and can no longer be downloaded.",
+    "deleteNotExpiredError": "This document cannot be deleted until it has expired.",
+    "deleteSuccess": "Document deleted successfully!",
+    "deleteError": "Could not delete document.",
+    "addSuccess": "Document uploaded successfully!",
+    "addError": "Could not upload document.",
+    "downloadError": "Could not download this document."
 },
 "changePassword": {
     "title": "Change Password",

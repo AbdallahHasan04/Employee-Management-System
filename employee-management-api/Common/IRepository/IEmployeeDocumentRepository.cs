@@ -6,6 +6,7 @@ namespace Common.IRepository
     {
         Task<EmployeeDocument?> GetByIdAsync(int id);
         Task AddAsync(EmployeeDocument document);
+        Task DeleteAsync(EmployeeDocument document);
         Task<(List<EmployeeDocument> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search);
     }
 }

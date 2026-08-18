@@ -37,7 +37,6 @@ namespace Infrastructure.Services
 
         public async Task<EmployeeDocumentDto> UploadDocumentAsync(EmployeeDocumentUploadDto dto, Stream fileStream, string fileExtension, string? createdBy)
         {
-            // Save the file first, if this throws, nothing has been written
             var relativePath = await _documentStorageService.SaveDocumentAsync(dto.EmployeeId, fileStream, fileExtension);
 
             var document = _mapper.Map<EmployeeDocument>(dto);
@@ -61,6 +60,11 @@ namespace Infrastructure.Services
                 return (DocumentDownloadResult.NotFound, null, null);
             }
 
+            if (IsExpired(document))
+            {
+                return (DocumentDownloadResult.Expired, null, null);
+            }
+
             if (!_documentStorageService.DocumentExists(document.DocumentPath))
             {
                 return (DocumentDownloadResult.FileMissing, null, null);
@@ -68,6 +72,30 @@ namespace Infrastructure.Services
 
             var physicalPath = _documentStorageService.GetPhysicalPath(document.DocumentPath);
             return (DocumentDownloadResult.Success, physicalPath, document.DocumentName);
+        }
+
+        public async Task<DocumentDeleteResult> DeleteDocumentAsync(int id)
+        {
+            var document = await _documentRepository.GetByIdAsync(id);
+            if (document == null)
+            {
+                return DocumentDeleteResult.NotFound;
+            }
+
+            if (!IsExpired(document))
+            {
+                return DocumentDeleteResult.NotYetExpired;
+            }
+
+            _documentStorageService.DeleteDocument(document.DocumentPath);
+            await _documentRepository.DeleteAsync(document);
+
+            return DocumentDeleteResult.Success;
+        }
+
+        private static bool IsExpired(EmployeeDocument document)
+        {
+            return document.ExpiryDate.HasValue && document.ExpiryDate.Value.Date < DateTime.UtcNow.Date;
         }
     }
 }
