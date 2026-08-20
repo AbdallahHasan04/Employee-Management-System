@@ -1,5 +1,4 @@
 {
-  
   "common": {
     "eyebrow": "Employee Management System",
     "actions": "Actions",
@@ -17,6 +16,8 @@
     "modifiedBy": "Modified By",
     "modificationDate": "Modification Date",
     "searchPlaceholder": "Search",
+    "all": "All",
+    "clearFilters": "Clear Filters",
     "itemsPerPage": "Items per page:",
     "nextPage": "Next page",
     "previousPage": "Previous page",
@@ -194,8 +195,8 @@
     "searchHint": "Search by: Employee No, Employee Name, or Position Name",
     "employeeName": "Employee Name",
     "positionName": "Position Name"
-},
-"employeeDocuments": {
+  },
+  "employeeDocuments": {
     "title": "Employee Documents",
     "newTitle": "New Document",
     "employee": "Employee",
@@ -225,8 +226,8 @@
     "addSuccess": "Document uploaded successfully!",
     "addError": "Could not upload document.",
     "downloadError": "Could not download this document."
-},
-"changePassword": {
+  },
+  "changePassword": {
     "title": "Change Password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",

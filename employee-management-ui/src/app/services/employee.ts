@@ -60,6 +60,9 @@ export interface EmployeeQueryParams
     sortBy?: string;
     sortDescending?: boolean;
     search?: string;
+    departmentId?: number;
+    positionId?: number;
+    status?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -81,6 +84,15 @@ export class EmployeeService {
         }
         if (params.search) {
             httpParams = httpParams.set('search', params.search);
+        }
+        if (params.departmentId !== undefined && params.departmentId !== null) {
+            httpParams = httpParams.set('departmentId', params.departmentId);
+        }
+        if (params.positionId !== undefined && params.positionId !== null) {
+            httpParams = httpParams.set('positionId', params.positionId);
+        }
+        if (params.status) {
+            httpParams = httpParams.set('status', params.status);
         }
 
         return this.http.get<PagedResult<Employee>>(this.apiUrl, { params: httpParams });

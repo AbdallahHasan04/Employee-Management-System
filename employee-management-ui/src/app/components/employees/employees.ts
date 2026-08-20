@@ -76,6 +76,10 @@ export class EmployeesComponent implements OnInit, OnDestroy
   isUploadingPhoto = false;
 
   searchTerm = '';
+  filterDepartmentId: number | null = null;
+  filterPositionId: number | null = null;
+  filterStatus: string | null = null;
+
   private search$ = new Subject<string>();
   private destroy$ = new Subject<void>();
 
@@ -87,12 +91,16 @@ export class EmployeesComponent implements OnInit, OnDestroy
   totalCount = 0;
   pageSizeOptions = [5, 10, 25, 50];
 
-
   readonly phonePattern = '^[0-9+\\-\\s()]*$';
 
   get today(): string
   {
     return new Date().toISOString().split('T')[0];
+  }
+
+  get hasActiveFilters(): boolean
+  {
+    return !!(this.searchTerm || this.filterDepartmentId !== null || this.filterPositionId !== null || this.filterStatus !== null);
   }
 
   ngOnInit()
@@ -134,6 +142,22 @@ export class EmployeesComponent implements OnInit, OnDestroy
     this.search$.next(term);
   }
 
+  onFilterChange(): void
+  {
+    this.pageIndex = 0;
+    this.loadData();
+  }
+
+  clearFilters(): void
+  {
+    this.searchTerm = '';
+    this.filterDepartmentId = null;
+    this.filterPositionId = null;
+    this.filterStatus = null;
+    this.pageIndex = 0;
+    this.loadData();
+  }
+
   onSortChange(sort: Sort): void
   {
     this.sortActive = sort.active;
@@ -157,7 +181,10 @@ export class EmployeesComponent implements OnInit, OnDestroy
       pageSize: this.pageSize,
       sortBy: this.sortDirection ? this.sortActive : undefined,
       sortDescending: this.sortDirection === 'desc',
-      search: this.searchTerm || undefined
+      search: this.searchTerm || undefined,
+      departmentId: this.filterDepartmentId ?? undefined,
+      positionId: this.filterPositionId ?? undefined,
+      status: this.filterStatus ?? undefined
     }).subscribe({
       next: (result) => {
         this.employees = result.items;
@@ -432,7 +459,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
     });
   }
 
- onDelete(employee: Employee): void
+  onDelete(employee: Employee): void
   {
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
       viewContainerRef: this.viewContainerRef,

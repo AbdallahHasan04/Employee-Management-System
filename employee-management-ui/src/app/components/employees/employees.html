@@ -277,16 +277,56 @@
       <span class="record-count">{{ totalCount }} {{ (totalCount === 1 ? 'common.record' : 'common.records') | translate }}</span>
     </div>
 
-    <div class="search-row">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
-        @if (searchTerm) {
-          <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
-            <mat-icon>close</mat-icon>
-          </button>
+    <div class="filters-container">
+      <div class="filter-controls-grid">
+        <mat-form-field appearance="outline" class="filter-search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" [placeholder]="'common.searchPlaceholder' | translate">
+          @if (searchTerm) {
+            <button matSuffix mat-icon-button (click)="searchTerm = ''; onSearchChange('')" aria-label="Clear search">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'employees.department' | translate }}</mat-label>
+          <mat-select [(ngModel)]="filterDepartmentId" (selectionChange)="onFilterChange()">
+            <mat-option [value]="null">{{ 'common.all' | translate }}</mat-option>
+            @for (dept of departments; track dept.id) {
+              <mat-option [value]="dept.id">{{ dept.nameEn }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'employees.position' | translate }}</mat-label>
+          <mat-select [(ngModel)]="filterPositionId" (selectionChange)="onFilterChange()">
+            <mat-option [value]="null">{{ 'common.all' | translate }}</mat-option>
+            @for (pos of positions; track pos.id) {
+              <mat-option [value]="pos.id">{{ pos.nameEn }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'employees.status' | translate }}</mat-label>
+          <mat-select [(ngModel)]="filterStatus" (selectionChange)="onFilterChange()">
+            <mat-option [value]="null">{{ 'common.all' | translate }}</mat-option>
+            <mat-option value="Active">{{ 'common.statusActive' | translate }}</mat-option>
+            <mat-option value="Inactive">{{ 'common.statusInactive' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        @if (hasActiveFilters) {
+          <div class="filter-actions">
+            <button mat-stroked-button color="warn" (click)="clearFilters()">
+              <mat-icon>filter_alt_off</mat-icon>
+              {{ 'common.clearFilters' | translate }}
+            </button>
+          </div>
         }
-      </mat-form-field>
+      </div>
       <span class="search-hint">{{ 'employees.searchHint' | translate }}</span>
     </div>
 
@@ -450,14 +490,14 @@
       </table>
     </div>
 
-    @if (!isLoading && employees.length === 0 && !searchTerm) {
+    @if (!isLoading && employees.length === 0 && !hasActiveFilters) {
       <div class="empty-state">
         <mat-icon>group_off</mat-icon>
         <p>{{ 'employees.noEmployees' | translate }}</p>
       </div>
     }
 
-    @if (!isLoading && employees.length === 0 && searchTerm) {
+    @if (!isLoading && employees.length === 0 && hasActiveFilters) {
       <div class="empty-state">
         <mat-icon>search_off</mat-icon>
         <p>{{ 'employees.noResults' | translate }}</p>
