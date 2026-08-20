@@ -32,9 +32,9 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
+        public async Task<PagedResultDto<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search, int? departmentId, int? positionId, string? status)
         {
-            var (items, totalCount) = await _employeeRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+            var (items, totalCount) = await _employeeRepository.GetPagedAsync(pageNumber, pageSize, sortBy, sortDescending, search, departmentId, positionId, status);
 
             var employeeIds = items.Select(e => e.Id).ToList();
             var currentPositions = await _employeePositionRepository.GetCurrentPositionsForEmployeeIdsAsync(employeeIds);
@@ -61,7 +61,12 @@ namespace Infrastructure.Services
         }
 
         public async Task<EmployeeDto> CreateEmployeeAsync(EmployeeDto dto, string? createdBy)
-        {
+        { 
+            if (await _userRepository.ExistsByUsernameAsync(dto.Username))
+            {
+                throw new InvalidOperationException($"Username '{dto.Username}' is already taken.");
+            }
+
             await _unitOfWork.BeginTransactionAsync();
             try
             {
@@ -135,8 +140,6 @@ namespace Infrastructure.Services
                     await _userRepository.UpdateAsync(user);
                 }
 
-                // Position change detection: only touch EmployeePositions if the
-                // submitted PositionId actually differs from what's currently open.
                 if (dto.PositionId.HasValue)
                 {
                     var currentPosition = await _employeePositionRepository.GetCurrentByEmployeeIdAsync(dto.Id);

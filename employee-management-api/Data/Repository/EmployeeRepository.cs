@@ -21,7 +21,7 @@ namespace Data.Repository
 
         public async Task<Employee?> GetByIdAsync(int id)
         {
-            return await _context.Employees.Include(e => e.Department).FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Employees.Include(e => e.Department).SingleOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task AddAsync(Employee employee)
@@ -53,7 +53,7 @@ namespace Data.Repository
             return await _context.Employees.AnyAsync(e => e.DepartmentId == departmentId);
         }
 
-        public async Task<(List<Employee> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
+        public async Task<(List<Employee> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search, int? departmentId, int? positionId, string? status)
         {
             var query = _context.Employees.AsNoTracking().Include(e => e.Department).AsQueryable();
 
@@ -66,6 +66,23 @@ namespace Data.Repository
                     e.Username.Contains(search) ||
                     e.NationalNo.Contains(search) ||
                     (e.Email != null && e.Email.Contains(search)));
+            }
+
+            if (departmentId.HasValue)
+            {
+                query = query.Where(e => e.DepartmentId == departmentId.Value);
+            }
+
+            if (positionId.HasValue)
+            {
+
+                query = query.Where(e => _context.EmployeePositions.Any(ep =>
+                    ep.EmployeeId == e.Id && ep.PositionId == positionId.Value && ep.EndDate == null));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(e => e.Status == status);
             }
 
             var totalCount = await query.CountAsync();
@@ -107,10 +124,10 @@ namespace Data.Repository
                 .Select(g => new
                 {
                     ActiveCount = g.Count(e => e.Status == "Active"),
-                    MaleCount = g.Count(e => e.Gender == "Male" && e.Status == "Active"),
-                    FemaleCount = g.Count(e => e.Gender == "Female" && e.Status == "Active")
+                    MaleCount = g.Count(e => e.Status == "Active" && e.Gender == "Male"),
+                    FemaleCount = g.Count(e => e.Status == "Active" && e.Gender == "Female")
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
             return stats == null
                 ? (0, 0, 0)

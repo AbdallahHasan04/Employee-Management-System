@@ -118,7 +118,8 @@
     "invalidPhotoType": "Only JPEG, PNG, and WEBP images are allowed.",
     "photoTooLarge": "Image must be 2MB or smaller.",
     "position": "Position",
-    "positionRequired": "Please select a position."
+    "positionRequired": "Please select a position.",
+    "addError": "Could not add employee."
   },
   "departments": {
     "title": "Department Page",

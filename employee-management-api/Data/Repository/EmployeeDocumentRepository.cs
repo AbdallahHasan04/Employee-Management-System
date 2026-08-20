@@ -19,7 +19,7 @@ namespace Data.Repository
             return await _context.EmployeeDocuments
                 .IgnoreQueryFilters()
                 .Include(d => d.Employee)
-                .FirstOrDefaultAsync(d => d.Id == id);
+                .SingleOrDefaultAsync(d => d.Id == id);
         }
 
         public async Task AddAsync(EmployeeDocument document)

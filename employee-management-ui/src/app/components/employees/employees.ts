@@ -359,6 +359,7 @@ export class EmployeesComponent implements OnInit, OnDestroy
       error: (error) => {
         console.error('API Error: Add failed.', error);
         this.isSubmitting = false;
+        this.snackbar.showError(error.error?.message || this.translate.instant('employees.addError'));
       }
     });
   }

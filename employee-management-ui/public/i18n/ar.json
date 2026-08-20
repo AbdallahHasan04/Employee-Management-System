@@ -117,7 +117,8 @@
     "invalidPhotoType": "يُسمح فقط بصور JPEG وPNG وWEBP.",
     "photoTooLarge": "يجب ألا يتجاوز حجم الصورة 2 ميجابايت.",
     "position": "المنصب",
-    "positionRequired": "يرجى اختيار المنصب."
+    "positionRequired": "يرجى اختيار المنصب.",
+    "addError": "تعذر إضافة الموظف."
   },
   "departments": {
     "title": "صفحة الأقسام",

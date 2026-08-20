@@ -16,7 +16,6 @@ namespace Data.Repository
 
         public async Task<(List<EmployeePosition> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? sortBy, bool sortDescending, string? search)
         {
-            // IgnoreQueryFilters + manual own-filter: history must stay visible 
             var query = _context.EmployeePositions
                 .IgnoreQueryFilters()
                 .Where(ep => !ep.IsDeleted)
@@ -66,6 +65,7 @@ namespace Data.Repository
             return await _context.EmployeePositions
                 .IgnoreQueryFilters()
                 .Where(ep => !ep.IsDeleted)
+                .AsNoTracking()
                 .Include(ep => ep.Position)
                 .Where(ep => employeeIds.Contains(ep.EmployeeId) && ep.EndDate == null)
                 .ToDictionaryAsync(ep => ep.EmployeeId);

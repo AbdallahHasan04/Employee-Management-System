@@ -28,12 +28,15 @@ namespace API.Controllers
             [FromQuery] int pageSize = 10,
             [FromQuery] string? sortBy = null,
             [FromQuery] bool sortDescending = false,
-            [FromQuery] string? search = null)
+            [FromQuery] string? search = null,
+            [FromQuery] int? departmentId = null,
+            [FromQuery] int? positionId = null,
+            [FromQuery] string? status = null)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1 || pageSize > 100) pageSize = 10;
 
-            var result = await _service.GetAllEmployeesAsync(pageNumber, pageSize, sortBy, sortDescending, search);
+            var result = await _service.GetAllEmployeesAsync(pageNumber, pageSize, sortBy, sortDescending, search, departmentId, positionId, status);
             return Ok(result);
         }
 
@@ -52,12 +55,19 @@ namespace API.Controllers
         public async Task<ActionResult> Create(EmployeeDto employeeDto)
         {
             var createdBy = User.Identity?.Name;
-            var created = await _service.CreateEmployeeAsync(employeeDto, createdBy);
-            return Ok(new
+            try
             {
-                message = "Employee created successfully! A linked user account was created too.",
-                employee = created
-            });
+                var created = await _service.CreateEmployeeAsync(employeeDto, createdBy);
+                return Ok(new
+                {
+                    message = "Employee created successfully! A linked user account was created too.",
+                    employee = created
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut]

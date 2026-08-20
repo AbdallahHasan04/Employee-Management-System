@@ -16,7 +16,12 @@ namespace Data.Repository
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
+        }
+
+        public async Task<bool> ExistsByUsernameAsync(string username)
+        {
+            return await _context.Users.AnyAsync(u => u.Username == username);
         }
 
         public async Task AddAsync(User user)
